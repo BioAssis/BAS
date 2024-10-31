@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import copy
 import matplotlib.pyplot as plt
 from lmfit import Model
 import streamlit as st # type: ignore
@@ -9,7 +8,6 @@ from bokeh.plotting import figure, show
 from bokeh.io import output_notebook
 from bokeh.palettes import Dark2
 from bokeh.models import ColumnDataSource, LineEditTool, Legend, LegendItem
-from bokeh.models import Whisker
 
 
 #______________________________________________________________________________________________________________________________________________
@@ -291,7 +289,7 @@ def growth_score(k, Nmax, y_0 = 0):
 
 
 
-def gerar_tabela(df_original,df_selecionados, modelo_escolhido = "Gompertz", ini_log = 0, fim_log = 0):
+def gerar_tabela(dici_final,df_selecionados, modelo_escolhido = "Gompertz", ini_log = 0, fim_log = 0):
     """ Essa função recebe 5 parametros, e devolve um dicionario comtendo os parametros específicos do cresciemnto populacional de cada poço especificado 
     pela variável df_selecionados.
 
@@ -301,13 +299,10 @@ def gerar_tabela(df_original,df_selecionados, modelo_escolhido = "Gompertz", ini
         modelo_escolhido (str): Uma string que define qual o modelo será usado para modelar os dados de dici_final.
         ini_log (int): Um valor que destrescreve o ponto inical da fase log, usado e necessario quando utilizados os modelos Linear e Exponencial. 
         fim_log (int, optional): _description_. Defaults to 0.
-S
+
     Returns:
         dicionario: Dicionário que recebe os parametros das curvas fitadas para o crescimento de cada um dos poços selecionados pelo usuário. 
     """
-
-    dici_final = copy.deepcopy(df_original)
-
 
     tabela = {
             "Placa": [],
@@ -353,9 +348,7 @@ S
                     tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
                     tabela["Growth Score"].append(GS)
 
-                    dici_final[placa][poço]["y_previsto"] = y_predito
-            
-            return tabela, dici_final
+            return tabela
                 
         else:
             for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
@@ -386,10 +379,8 @@ S
                 tabela['A'].append(resultado_fit.params["Nmax"].value)
                 tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
                 tabela["Growth Score"].append(GS)
-                
-                dici_final[placa][poço]["y_previsto"] = y_predito
-            
-            return tabela, dici_final
+
+            return tabela
         
 
     if modelo_escolhido == "Zwietering":
@@ -427,9 +418,7 @@ S
                     tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
                     tabela["Growth Score"].append(GS)
             
-                    dici_final[placa][poço]["y_previsto"] = y_predito
-            
-            return tabela, dici_final
+            return tabela
         
         else:
             for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
@@ -463,9 +452,7 @@ S
                 tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
                 tabela["Growth Score"].append(GS)
 
-                dici_final[placa][poço]["y_previsto"] = y_predito
-            
-            return tabela, dici_final
+            return tabela 
             
         
     if modelo_escolhido == "Linear":
@@ -603,7 +590,6 @@ S
                     tabela['A'].append(A)
                     tabela["Fase lag"].append(inicio_intervalo)
                     tabela["Growth Score"].append(GS)
-                    
             
             return tabela  
 
@@ -703,50 +689,22 @@ def cria_dataset_grafico(df_final, df_selecinados, modelo):
             df_grafico[f"{placa} - {poços}"] = y
         
         return df_grafico
-    
+
+# --------------------- Função que gera gráficos --------------------
 
 
-def filtra_dataset(df, dici_selecionados):
-    """
-    Filtra o dicionário original com base nas placas e poços selecionados.
-
-    Args:
-        df (dict): Dicionário contendo o dataset original.
-        dici_selecionados (dict): Dicionário com placas e poços selecionados.
-
-    Returns:
-        dict: Novo dicionário com os dados filtrados.
-    """
-    # Inicializa o dicionário filtrado
-    df_filtrado = {}
-
-    # Itera sobre as placas selecionadas
-    for placa in dici_selecionados['Placa']:
-        if placa in df:  # Verifica se a placa está no dicionário original
-            df_filtrado[placa] = {}
-            # Itera sobre os poços selecionados
-            for poco in dici_selecionados['Poços']:
-                if poco in df[placa]:  # Verifica se o poço está na placa
-                    # Adiciona o poço e seus dados ao novo dicionário
-                    df_filtrado[placa][poco] = df[placa][poco]
-
-    return df_filtrado
-
-#         --------------------- Função que gera gráficos --------------------
-
-
-def plota_dataset_selecionado_para_linear(df, titulo, legenda_x, legenda_y, legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
+def plota_dataset_selecionado(df, titulo, legenda_x, legenda_y, legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
     """ 
 
     Args:
-        df (_type_): Dataset contendo somente o eixo x e as colunas y_esperimental dos poços selecionados.
-        titulo (string): _description_
-        legenda_x (string): _description_
-        legenda_y (string): _description_
-        legenda (string): Legenda/nome de cada um dos poços. 
-        fonte_selecionada (string): _description_
-        tamanho_legenda (string, optional): Valor em aspas que dá o tamanho da legenda nos eixos X e Y. Valor padrão: "12pt".
-        tamanho_titulo (string, optional): Valor em aspas que dá o tamanho do titulo. Valor padrão: "14pt".
+        df (_type_): _description_
+        titulo (_type_): _description_
+        legenda_x (_type_): _description_
+        legenda_y (_type_): _description_
+        legenda (_type_): _description_
+        fonte_selecionada (_type_): _description_
+        tamanho_legenda (str, optional): _description_. Defaults to "12pt".
+        tamanho_titulo (str, optional): _description_. Defaults to "14pt".
     """
 
 
@@ -793,8 +751,10 @@ def plota_dataset_selecionado_para_linear(df, titulo, legenda_x, legenda_y, lege
     p.xaxis.axis_label_text_font_style = "bold" 
     p.yaxis.axis_label_text_font_style = "bold" 
     
+    # Dados do eixo X
     eixo_x = df.iloc[:, 0]
     
+    # Dados e legendas das séries do eixo Y
     colors = Dark2[8]
     legend_items = []
     for i in range(1, df.shape[1]):
@@ -814,153 +774,8 @@ def plota_dataset_selecionado_para_linear(df, titulo, legenda_x, legenda_y, lege
     p.add_layout(legend)
     p.legend.location = "bottom_right"
     
+    # Exibindo o gráfico no Streamlit
     st.bokeh_chart(p)
 
-def gera_tres_graficos(df_comtriplicatas, df_selecionados):
-    
-    
-    placas_e_poços = []
-
-    for i in range(len(df_selecionados["Placa"])):
-        poço_placa = f"{df_selecionados["Placa"][i]}-{df_selecionados["Poços"][i]}"    
-        placas_e_poços.append(poço_placa)
-
-    poço_escolhido = st.selectbox("Selecione seu poço", ["Nenhum"] + placas_e_poços)
-
-    
-    if poço_escolhido != "Nenhum":
-
-        i = placas_e_poços.index(poço_escolhido)
-
-        placa = df_selecionados["Placa"][i]
-        poços = df_selecionados["Poços"][i]
-
-        x = df_comtriplicatas[placa][poços]["Tempo(horas)"]
-
-        # Criando três colunas no Streamlit para exibir os gráficos lado a lado
-        col1, col2, col3 = st.columns(3)
-
-        
-        for idx, coluna in enumerate(df_comtriplicatas[placa][poços].columns[1:4]):  # Limita a três colunas
-            y = df_comtriplicatas[placa][poços][coluna]
-
-            # Criando o gráfico para cada coluna de dados
-            fig, ax = plt.subplots()
-            ax.plot(x, y, label=coluna)
-            ax.set_xlabel("Tempo(horas)")
-            ax.set_ylabel(coluna)
-            ax.legend()
-            
-            # Selecionando a coluna para exibir o gráfico
-            if idx == 0:
-                col1.pyplot(fig)
-            elif idx == 1:
-                col2.pyplot(fig)
-            elif idx == 2:
-                col3.pyplot(fig)
-    else:
-        st.write("Nenhum poço foi escolhido para análise ainda.")
 
 
-
-def plota_dataset_selecionado_padrao(df, titulo, legenda_x, legenda_y, legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
-    """
-    Args:
-        df (dict): Dicionário contendo o dataset das placas e poços.
-        titulo (str): Título do gráfico.
-        legenda_x (str): Legenda do eixo x.
-        legenda_y (str): Legenda do eixo y.
-        legenda (list): Lista de legendas/nome de cada um dos poços.
-        fonte_selecionada (str): Fonte selecionada para o texto.
-        tamanho_legenda (str, optional): Tamanho da fonte da legenda nos eixos. Padrão: "12pt".
-        tamanho_titulo (str, optional): Tamanho da fonte do título. Padrão: "14pt".
-    """
-    
-    # Configurações adicionais de fonte
-    tamanho_titulo = f"{tamanho_titulo}pt"
-    tamanho_legenda = f"{tamanho_legenda}pt"
-
-    # Criar a figura
-    p = figure(
-        title=titulo,
-        x_axis_label=legenda_x,
-        y_axis_label=legenda_y,
-        width=700,
-        height=400,
-        background_fill_color="white",
-        border_fill_color="white",
-        tools="box_zoom,reset,save"
-    )
-
-    # Configuração do título e dos eixos
-    p.title.text_font = fonte_selecionada
-    p.title.text_font_size = tamanho_titulo
-    p.title.align = "center"
-    p.title.text_color = "black"
-    p.xaxis.axis_label_text_font = fonte_selecionada
-    p.yaxis.axis_label_text_font = fonte_selecionada
-    p.xaxis.axis_label_text_font_size = tamanho_legenda
-    p.yaxis.axis_label_text_font_size = tamanho_legenda
-    p.xaxis.axis_label_text_color = "#000000"
-    p.yaxis.axis_label_text_color = "#000000"
-    p.xaxis.axis_label_text_font_style = "bold"
-    p.yaxis.axis_label_text_font_style = "bold"
-
-    # Cores para os gráficos
-    colors = Dark2[8]
-    legend_items = []
-
-    # Checkbox para mostrar/ocultar erro
-    mostrar_erro = st.checkbox("Mostrar Erro", value=True)
-
-    # Itera sobre as placas e poços para plotar os dados
-    for idx_placa, (placa, poços) in enumerate(df.items()):
-        for idx_poco, (poco, data) in enumerate(poços.items()):
-            # Verifica se 'data' é um DataFrame ou dicionário esperado
-            if isinstance(data, dict) or isinstance(data, pd.DataFrame):
-                # Acessa os dados
-                tempo = data["Tempo(horas)"]
-                y_exp = data["y_experimental"]
-                y_prev = data["y_previsto"]
-
-                # Calcula o erro absoluto entre y_esperimental e y_previsto
-                erro = abs(y_exp - y_prev)
-
-                # Cria uma fonte de dados para Bokeh
-                source = ColumnDataSource(data={
-                    'x': tempo,
-                    'y': y_exp,
-                    'erro': erro,
-                    'upper': y_exp + erro,
-                    'lower': y_exp - erro
-                })
-
-                # Plota a linha de y_esperimental
-                linha = p.line(
-                    'x', 'y',
-                    source=source,
-                    line_width=2.5,
-                    line_alpha=0.9,
-                    color=colors[(idx_placa + idx_poco) % len(colors)]
-                )
-
-                # Condicional para mostrar ou não os whiskers
-                if mostrar_erro:
-                    # Adiciona barras de erro (Whiskers) usando as colunas 'upper' e 'lower'
-                    whisker = Whisker(base='x', upper='upper', lower='lower', dimension='height', source=source,
-                                      upper_head=None, lower_head=None, line_color=colors[(idx_placa + idx_poco) % len(colors)])
-                    p.add_layout(whisker)
-
-                # Cria um item de legenda para o gráfico
-                legend_item = LegendItem(label=legenda[idx_placa * len(poços) + idx_poco], renderers=[linha])
-                legend_items.append(legend_item)
-            else:
-                st.warning(f"Dados não encontrados para {placa} - {poco}. Verifique a estrutura do dataframe.")
-
-    # Adiciona a legenda no gráfico
-    legend = Legend(items=legend_items)
-    p.add_layout(legend)
-    p.legend.location = "bottom_right"
-
-    # Exibe o gráfico no Streamlit
-    st.bokeh_chart(p)
