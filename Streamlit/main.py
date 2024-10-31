@@ -206,7 +206,7 @@ if uploaded_files:
             
 
 
-
+            st.write("Teste")
             
             if modelo_usado == "Linear":
                 df_tabela_final = fbas.gerar_tabela(dici_final,poços_selecionados, modelo_usado, ini_log, fim_log)
