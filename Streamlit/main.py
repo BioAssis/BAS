@@ -57,7 +57,7 @@ if uploaded_files:
                 arquivos += 1
 
             elif uploaded_file.name.endswith(".xlsx"):
-                df_importado = pd.read_excel(uploaded_file, engine="openpyxl")
+                df_importado = pd.read_excel(uploaded_file, engine="openpyxl", header=None)
                 dados_brutos.append(df_importado)
                 arquivos += 1
                 
@@ -82,13 +82,17 @@ if uploaded_files:
     with select:
         st.header("Todos os Poços")
 
+
         df_dict_com_triplicata, df_dict_sem_triplicata = fbas.arquivos_to_placas(dados_brutos)
+
 
         dici_final = copy.deepcopy(df_dict_sem_triplicata)
 
+
         poços_selecionados = None
 
-        df_tabela, algo_1 = fbas.gerar_tabela(dici_final, poços_selecionados)
+
+        df_tabela = fbas.gerar_tabela(dici_final, poços_selecionados)
 
 
 
@@ -137,8 +141,10 @@ if uploaded_files:
 
         if poços_selecionados == None:
             poços_selecionados = seleciona_da_tabela(df_tabela)
+
         
 
+        
 
 
         st.header("Poços Selecionados")
@@ -175,23 +181,23 @@ if uploaded_files:
 
             #st.write(df_para_graficos)
 
-            modelo_usado = st.selectbox(
+            modelo_escolhido = st.selectbox(
                 'Modelos Possíveis',
                 ["Gompertz", "Zwietering", "Linear", "Exponencial"],  
                 index=0
             )
     
             
-            if modelo_usado == "Linear":
+            if modelo_escolhido == "Linear":
                 colunas = st.columns(2)
 
                 with colunas[0]:
-                    ini_log = 2 * int(st.number_input("Insira o primeiro valor:", value=5.0, format="%.2f", step=0.5))
+                    ini_log = int(st.number_input("Insira o primeiro valor:", value=5.0, format="%.2f", step=0.5))
                         
                 with colunas[1]:     
-                    fim_log = 2 * int(st.number_input("Insira o segundo valor:", value=12.0, format="%.2f", step=0.5)) 
+                    fim_log = int(st.number_input("Insira o segundo valor:", value=12.0, format="%.2f", step=0.5)) 
             
-            elif modelo_usado == "Exponencial":
+            elif modelo_escolhido == "Exponencial":
                 colunas = st.columns(2)
 
                 with colunas[0]:
@@ -205,35 +211,23 @@ if uploaded_files:
                 fim_log = 0
             
 
-
-            st.write("Teste")
-            
-            if modelo_usado == "Linear":
-                df_tabela_final = fbas.gerar_tabela(dici_final,poços_selecionados, modelo_usado, ini_log, fim_log)
+             
+            if modelo_escolhido == "Linear":
+                df_tabela_final = fbas.gerar_tabela(dici_final,poços_selecionados, modelo_escolhido, ini_log, fim_log)
                 
 
-            elif modelo_usado == "Exponencial":
-                df_tabela_final = fbas.gerar_tabela(dici_final,poços_selecionados, modelo_usado, ini_log, fim_log)
+            elif modelo_escolhido == "Exponencial":
+                df_tabela_final = fbas.gerar_tabela(dici_final,poços_selecionados, modelo_escolhido, ini_log, fim_log)
 
 
             else:
-                df_tabela_final, df_com_previsoes = fbas.gerar_tabela(dici_final,poços_selecionados, modelo_usado, ini_log, fim_log)
-                df_seila = fbas.filtra_dataset(df_com_previsoes, poços_selecionados)  # Devolve o dataset original porem só com os poços selecionados com as previsões.
-
-            
-            teste = pd.DataFrame(df_tabela_final)
-
-               
-            st.write(teste)
+                df_tabela_final = fbas.gerar_tabela(dici_final,poços_selecionados, modelo_escolhido, ini_log, fim_log)
+        
 
 
+            df_sem_triplicata_com_std = fbas.gerar_df_com_std(dici_final, df_dict_com_triplicata, poços_selecionados, modelo_escolhido) # IMPORTANTE !!!!!!!
+           
 
-
-
-
-            df_para_graficos = fbas.cria_dataset_grafico(dici_final, poços_selecionados, modelo_usado) # Existe só pra não da erro em todo o resto
-
-             
 
 
 
@@ -257,6 +251,10 @@ if uploaded_files:
                     tamanho_legenda = st.number_input("Tamanho da legenda", value=12, step=1)
                     tamanho_titulo = st.number_input("Tamanho do titulo", value=14, step=1)
 
+
+                legendas_padrao = fbas.gerar_legendas(df_tabela_final)
+
+                
                 legendas = []
 
                 
@@ -267,45 +265,42 @@ if uploaded_files:
                 )
 
                 if opcao_legenda == "Padrão":
-                    legendas = df_para_graficos.columns[1:]
+                    legendas = legendas_padrao
+
 
                 else:
-                    colunas = st.columns(3)
+                    colunas = st.columns(2)
 
-                    terco = len(df_para_graficos.columns) // 3 
+                    terco = len(legendas_padrao) // 2 
+                    excesso = len(legendas_padrao) % 2  # Excesso de elementos ao dividir por 3
 
+
+                    # Coloca os valores em cada coluna, considerando o excesso
                     with colunas[0]:
-                        for col in df_para_graficos.columns[1:terco+1]:
+                        for col in legendas_padrao[0:terco + (1 if excesso > 0 else 0)]:
                             legenda = st.text_input(f"Legenda: {col}", value=col)
                             legendas.append(legenda)
+
 
                     with colunas[1]:
-                        for col in df_para_graficos.columns[terco+1:(2*terco)+1]:
+                        for col in legendas_padrao[terco + (1 if excesso > 0 else 0):]:
                             legenda = st.text_input(f"Legenda: {col}", value=col)
                             legendas.append(legenda)
 
-                    with colunas[2]:
-                        for col in df_para_graficos.columns[2*terco+1:]:
-                            legenda = st.text_input(f"Legenda: {col}", value=col)
-                            legendas.append(legenda)
+            
+            fbas.plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo)
 
 
-            df_teste = fbas.cria_dataset_grafico(dici_final, poços_selecionados, modelo_usado)
             
-            
-            if modelo_usado == "Linear":
-                fbas.plota_dataset_selecionado_para_linear(df_teste, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo)
+            if st.button("Gerar Tabela"):
+
+                teste = pd.DataFrame(df_tabela_final)
 
                 
-            elif modelo_usado == "Exponencial":
-                fbas.plota_dataset_selecionado_para_linear(df_tabela_final, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo)
+                st.write(teste)
+        
 
-            else:
 
-                fbas.plota_dataset_selecionado_padrao(df_seila, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo)
-            
-
-            
 
         else:
             st.markdown("Nenhum poço selecionado.")

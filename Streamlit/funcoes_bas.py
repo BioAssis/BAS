@@ -8,7 +8,7 @@ import seaborn as sns
 from bokeh.plotting import figure, show
 from bokeh.io import output_notebook
 from bokeh.palettes import Dark2
-from bokeh.models import ColumnDataSource, LineEditTool, Legend, LegendItem
+from bokeh.models import ColumnDataSource, LineEditTool, Legend, LegendItem, HoverTool
 from bokeh.models import Whisker
 
 
@@ -312,11 +312,11 @@ S
     tabela = {
             "Placa": [],
             "Poços": [],
-            "R²": [],
             "μMax": [],
             "A": [],
             "Fase lag": [],
             "Growth Score": [],
+            "R²": [],
             }
 
 
@@ -353,9 +353,9 @@ S
                     tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
                     tabela["Growth Score"].append(GS)
 
-                    dici_final[placa][poço]["y_previsto"] = y_predito
+
             
-            return tabela, dici_final
+            return tabela
                 
         else:
             for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
@@ -387,269 +387,137 @@ S
                 tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
                 tabela["Growth Score"].append(GS)
                 
-                dici_final[placa][poço]["y_previsto"] = y_predito
             
-            return tabela, dici_final
+            return tabela
         
 
     if modelo_escolhido == "Zwietering":
 
-        if df_selecionados is None:
-            for placa in dici_final:
-                for poço in dici_final[placa]:
-                    
-                    x = dici_final[placa][poço]["Tempo(horas)"]
-                    y = dici_final[placa][poço]["y_experimental"]
-                    
-                    modelo_zwietering = Model(zwietering)
-
-                    params = modelo_zwietering.make_params(Nmax=0.1, k=0.1, tlag=0, y_0 = 0)
-                    params['Nmax'].min = 0  # Limite mínimo para Nmax  
-                    params['k'].min = 0.01  # Limite mínimo para k
-                    params['tlag'].min = 0  # Limite mínimo para tlag
-                    params['y_0'].min = 0  # Limite mínimo para tlag
-                    params['y_0'].vary = False  # Fizando y_0
-
-                    resultado_fit = modelo_zwietering.fit(y, params, t=x)
-                    
-                    y_predito = resultado_fit.best_fit
-                    ss_total = np.sum((y - np.mean(y)) ** 2)
-                    ss_residual = np.sum((y - y_predito) ** 2)
-                    r2 = 1 - (ss_residual / ss_total)
-
-                    GS = growth_score(resultado_fit.params["k"].value,resultado_fit.params["Nmax"].value)
-
-                    tabela["Placa"].append(placa)
-                    tabela["Poços"].append(poço)
-                    tabela["R²"].append(r2)
-                    tabela['μMax'].append(resultado_fit.params["k"].value)
-                    tabela['A'].append(resultado_fit.params["Nmax"].value)
-                    tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
-                    tabela["Growth Score"].append(GS)
-            
-                    dici_final[placa][poço]["y_previsto"] = y_predito
-            
-            return tabela, dici_final
-        
-        else:
-            for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
-
-                x = dici_final[placa][poço]["Tempo(horas)"]
-                y = dici_final[placa][poço]["y_experimental"]
+        for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
                 
-                modelo_zwietering = Model(zwietering)
-
-                params = modelo_zwietering.make_params(Nmax=0.1, k=0.1, tlag=0, y_0 = 0)
-                params['Nmax'].min = 0  # Limite mínimo para Nmax  
-                params['k'].min = 0.01  # Limite mínimo para k
-                params['tlag'].min = 0  # Limite mínimo para tlag
-                params['y_0'].min = 0  # Limite mínimo para tlag
-                params['y_0'].vary = False  # Fizando y_0
-
-                resultado_fit = modelo_zwietering.fit(y, params, t=x)
-
-                y_predito = resultado_fit.best_fit
-                ss_total = np.sum((y - np.mean(y)) ** 2)
-                ss_residual = np.sum((y - y_predito) ** 2)
-                r2 = 1 - (ss_residual / ss_total)
-
-                GS = growth_score(resultado_fit.params["k"].value,resultado_fit.params["Nmax"].value)
-
-                tabela["Placa"].append(placa)
-                tabela["Poços"].append(poço)
-                tabela["R²"].append(r2)
-                tabela['μMax'].append(resultado_fit.params["k"].value)
-                tabela['A'].append(resultado_fit.params["Nmax"].value)
-                tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
-                tabela["Growth Score"].append(GS)
-
-                dici_final[placa][poço]["y_previsto"] = y_predito
+            x = dici_final[placa][poço]["Tempo(horas)"]
+            y = dici_final[placa][poço]["y_experimental"]
             
-            return tabela, dici_final
+            modelo_zwietering = Model(zwietering)
+
+            params = modelo_zwietering.make_params(Nmax=0.1, k=0.1, tlag=0, y_0 = 0)
+            params['Nmax'].min = 0  # Limite mínimo para Nmax  
+            params['k'].min = 0.01  # Limite mínimo para k
+            params['tlag'].min = 0  # Limite mínimo para tlag
+            params['y_0'].min = 0  # Limite mínimo para tlag
+            params['y_0'].vary = False  # Fizando y_0
+
+            resultado_fit = modelo_zwietering.fit(y, params, t=x)
+            
+            y_predito = resultado_fit.best_fit
+            ss_total = np.sum((y - np.mean(y)) ** 2)
+            ss_residual = np.sum((y - y_predito) ** 2)
+            r2 = 1 - (ss_residual / ss_total)
+
+            GS = growth_score(resultado_fit.params["k"].value,resultado_fit.params["Nmax"].value)
+
+            tabela["Placa"].append(placa)
+            tabela["Poços"].append(poço)
+            tabela["R²"].append(r2)
+            tabela['μMax'].append(resultado_fit.params["k"].value)
+            tabela['A'].append(resultado_fit.params["Nmax"].value)
+            tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
+            tabela["Growth Score"].append(GS)
+        
+        
+        return tabela
+        
             
         
     if modelo_escolhido == "Linear":
          
-        if df_selecionados is None:
-            for placa in dici_final:
-                for poço in dici_final[placa]:
+        for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
 
-                    
-                    x = dici_final[placa][poço]["Tempo(horas)"]
-                    y = dici_final[placa][poço]["y_experimental"]
+            x = dici_final[placa][poço]["Tempo(horas)"]
+            y = dici_final[placa][poço]["y_experimental"]
 
-                    modelo_linear = Model(linear)
+            modelo_linear = Model(linear)
 
-                    log_column = np.log(y)
+            log_column = np.log(y)
 
-                    inicio_intervalo = ini_log
-                    fim_intervalo = fim_log
+            inicio_intervalo = 2 * ini_log
 
-                    # Filtrar os dados para o intervalo especificado
-                    x_intervalo = x[inicio_intervalo:fim_intervalo+1]
+            fim_intervalo = 2 * fim_log
 
-                    st.write(x_intervalo)
-                    log_column_intervalo = log_column[inicio_intervalo:fim_intervalo+1]
+            # Filtrar os dados para o intervalo especificado
+            x_intervalo = x[inicio_intervalo:fim_intervalo+1]
 
-                    # Definir parâmetros iniciais
-                    params = modelo_linear.make_params(slope=1, intercept=0)
+            log_column_intervalo = log_column[inicio_intervalo:fim_intervalo+1]
 
-                    # Fazer o ajuste apenas no intervalo selecionado
-                    resultado_fit = modelo_linear.fit(log_column_intervalo, params, t=x_intervalo)
-                    
-                    A = max(y)
+            # Definir parâmetros iniciais
+            params = modelo_linear.make_params(slope=1, intercept=0)
 
-                    y_predito = resultado_fit.best_fit
-                    ss_total = np.sum((log_column_intervalo - np.mean(log_column_intervalo)) ** 2)
-                    ss_residual = np.sum((log_column_intervalo - y_predito) ** 2)
-                    r2 = 1 - (ss_residual / ss_total)
-
-                    GS = growth_score(resultado_fit.params["slope"].value,A)
-                    
-                    tabela["Placa"].append(placa)
-                    tabela["Poços"].append(poço)
-                    tabela["R²"].append(r2)
-                    tabela['μMax'].append(resultado_fit.params["slope"].value)
-                    tabela['A'].append(resultado_fit.params["A"].value)
-                    tabela["Fase lag"].append(inicio_intervalo)
-                    tabela["Growth Score"].append(GS)
+            # Fazer o ajuste apenas no intervalo selecionado
+            resultado_fit = modelo_linear.fit(log_column_intervalo, params, t=x_intervalo)
             
-            return tabela  
+            A = max(y)
 
-        else:
-            for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
+            y_predito = resultado_fit.best_fit
+            ss_total = np.sum((log_column_intervalo - np.mean(log_column_intervalo)) ** 2)
+            ss_residual = np.sum((log_column_intervalo - y_predito) ** 2)
+            r2 = 1 - (ss_residual / ss_total)
 
-                st.write()
-                    
-                x = dici_final[placa][poço]["Tempo(horas)"]
-                y = dici_final[placa][poço]["y_experimental"]
-
-                modelo_linear = Model(linear)
-
-                log_column = np.log(y)
-
-                inicio_intervalo = ini_log
-                fim_intervalo = fim_log
-
-                # Filtrar os dados para o intervalo especificado
-                x_intervalo = x[inicio_intervalo:fim_intervalo+1]
-                log_column_intervalo = log_column[inicio_intervalo:fim_intervalo+1]
-
-                # Definir parâmetros iniciais
-                params = modelo_linear.make_params(slope=1, intercept=0)
-
-                # Fazer o ajuste apenas no intervalo selecionado
-                resultado_fit = modelo_linear.fit(log_column_intervalo, params, t=x_intervalo)
-                
-                A = max(y)
-
-                y_predito = resultado_fit.best_fit
-                ss_total = np.sum((log_column_intervalo - np.mean(log_column_intervalo)) ** 2)
-                ss_residual = np.sum((log_column_intervalo - y_predito) ** 2)
-                r2 = 1 - (ss_residual / ss_total)
-
-                GS = growth_score(resultado_fit.params["slope"].value,A)
-                
-                tabela["Placa"].append(placa)
-                tabela["Poços"].append(poço)
-                tabela["R²"].append(r2)
-                tabela['μMax'].append(resultado_fit.params["slope"].value)
-                tabela['A'].append(A)
-                tabela["Fase lag"].append(inicio_intervalo)
-                tabela["Growth Score"].append(GS)
+            GS = growth_score(resultado_fit.params["slope"].value,A)
             
-            return tabela 
+            tabela["Placa"].append(placa)
+            tabela["Poços"].append(poço)
+            tabela["R²"].append(r2)
+            tabela['μMax'].append(resultado_fit.params["slope"].value)
+            tabela['A'].append(A)
+            tabela["Fase lag"].append(ini_log)
+            tabela["Growth Score"].append(GS)
+        
+        return tabela  
+ 
 
 
     if modelo_escolhido == "Exponencial":
         
-        if df_selecionados is None:
-            for placa in dici_final:
-                for poço in dici_final[placa]:
-
-                    
-                    x = dici_final[placa][poço]["Tempo(horas)"]
-                    y = dici_final[placa][poço]["y_experimental"]
-
-                    modelo_exponencial = Model(exponencial)
-
-
-                    inicio_intervalo = ini_log
-                    fim_intervalo = fim_log
-
-                    # Filtrar os dados para o intervalo especificado
-                    x_intervalo = x[inicio_intervalo:fim_intervalo+1]
-                    y_intervalo = y[inicio_intervalo:fim_intervalo+1]
-
-                    # Definir parâmetros iniciais
-                    params = modelo_exponencial.make_params(Nmax=0, k=0.5)
-
-                    # Fazer o ajuste apenas no intervalo selecionado
-                    resultado_fit = modelo_exponencial.fit(y_intervalo, params, t=x_intervalo)
-                    
-                    A = max(y)
-
-                    y_predito = resultado_fit.best_fit
-                    ss_total = np.sum((y_intervalo - np.mean(y_intervalo)) ** 2)
-                    ss_residual = np.sum((y_intervalo - y_predito) ** 2)
-                    r2 = 1 - (ss_residual / ss_total)
-
-                    GS = growth_score(resultado_fit.params["k"].value,A)
-                    
-                    tabela["Placa"].append(placa)
-                    tabela["Poços"].append(poço)
-                    tabela["R²"].append(r2)
-                    tabela['μMax'].append(resultado_fit.params["k"].value)
-                    tabela['A'].append(A)
-                    tabela["Fase lag"].append(inicio_intervalo)
-                    tabela["Growth Score"].append(GS)
-                    
-            
-            return tabela  
-
-        else:
-            for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
-
-                st.write()
-                    
-                x = dici_final[placa][poço]["Tempo(horas)"]
-                y = dici_final[placa][poço]["y_experimental"]
-
-                modelo_exponencial = Model(exponencial)
-
-                log_column = np.log(y)
-
-                inicio_intervalo = ini_log
-                fim_intervalo = fim_log
-
-                # Filtrar os dados para o intervalo especificado
-                x_intervalo = x[inicio_intervalo:fim_intervalo+1]
-                y_intervalo = y[inicio_intervalo:fim_intervalo+1]
-
-                # Definir parâmetros iniciais
-                params = modelo_exponencial.make_params(Nmax=0, k=0.5)
-
-                # Fazer o ajuste apenas no intervalo selecionado
-                resultado_fit = modelo_exponencial.fit(y_intervalo, params, t=x_intervalo)
+        for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
                 
-                A = max(y)
+            x = dici_final[placa][poço]["Tempo(horas)"]
+            y = dici_final[placa][poço]["y_experimental"]
 
-                y_predito = resultado_fit.best_fit
-                ss_total = np.sum((y_intervalo - np.mean(y_intervalo)) ** 2)
-                ss_residual = np.sum((y_intervalo - y_predito) ** 2)
-                r2 = 1 - (ss_residual / ss_total)
+            modelo_exponencial = Model(exponencial)
 
-                GS = growth_score(resultado_fit.params["k"].value,A)
-                
-                tabela["Placa"].append(placa)
-                tabela["Poços"].append(poço)
-                tabela["R²"].append(r2)
-                tabela['μMax'].append(resultado_fit.params["k"].value)
-                tabela['A'].append(A)
-                tabela["Fase lag"].append(inicio_intervalo)
-                tabela["Growth Score"].append(GS)
+
+            inicio_intervalo = 2 * ini_log
+            fim_intervalo = 2 * fim_log
+
+            # Filtrar os dados para o intervalo especificado
+            x_intervalo = x[inicio_intervalo:fim_intervalo+1]
+            y_intervalo = y[inicio_intervalo:fim_intervalo+1]
+
+            # Definir parâmetros iniciais
+            params = modelo_exponencial.make_params(Nmax=0, k=0.5)
+
+            # Fazer o ajuste apenas no intervalo selecionado
+            resultado_fit = modelo_exponencial.fit(y_intervalo, params, t=x_intervalo)
             
-            return tabela 
+            A = max(y)
+
+            y_predito = resultado_fit.best_fit
+            ss_total = np.sum((y_intervalo - np.mean(y_intervalo)) ** 2)
+            ss_residual = np.sum((y_intervalo - y_predito) ** 2)
+            r2 = 1 - (ss_residual / ss_total)
+
+            GS = growth_score(resultado_fit.params["k"].value,A)
+            
+            tabela["Placa"].append(placa)
+            tabela["Poços"].append(poço)
+            tabela["R²"].append(r2)
+            tabela['μMax'].append(resultado_fit.params["k"].value)
+            tabela['A'].append(A)
+            tabela["Fase lag"].append(ini_log)
+            tabela["Growth Score"].append(GS)
+                
+        
+        return tabela  
 
 
 # -------------------------- Funçoes testes -------------------------
@@ -705,6 +573,299 @@ def cria_dataset_grafico(df_final, df_selecinados, modelo):
         return df_grafico
     
 
+def gerar_legendas(df_tabela_final):
+
+    legendas = []
+    for i in range(len(df_tabela_final["Placa"])):
+
+        placa = df_tabela_final["Placa"][i]
+        poços = df_tabela_final["Poços"][i]
+
+        legendas.append(f'{placa} - {poços}')
+
+    return legendas
+
+
+def gerar_df_com_std(df_sem_triplicatas, df_com_triplicatas, poços_selecionados, modelo_escolhido):
+    
+
+    df_sem_triplicatas_com_std = copy.deepcopy(df_sem_triplicatas)
+
+  
+    tabela = poços_selecionados
+
+    if modelo_escolhido == "Linear":
+        for placa, poço in zip(tabela["Placa"], tabela["Poços"]):
+
+            lista_std = []
+            df_sem_triplicatas[placa][poço]["y_experimental"] = np.log(df_sem_triplicatas[placa][poço]["y_experimental"])
+
+            for i in range(len(df_sem_triplicatas[placa][poço]["y_experimental"])):
+            
+                media = df_sem_triplicatas[placa][poço]["y_experimental"][i]
+   
+                std = 0 
+                soma = 0
+
+                for o in range(1,3):
+                    soma += ((np.log(df_com_triplicatas[placa][poço].iloc[:,o])[i] - media) ** 2)
+
+                std = np.sqrt(soma/3)
+
+                lista_std.append(std)
+
+            df_sem_triplicatas_com_std[placa][poço]["y_experimental"] = np.log(df_sem_triplicatas_com_std[placa][poço]["y_experimental"])
+            df_sem_triplicatas_com_std[placa][poço]["std"] = lista_std
+
+        df_filtrado_com_std = {}
+
+        for i in range(len(poços_selecionados['Placa'])):
+            
+            placa = poços_selecionados["Placa"][i]
+            poço = poços_selecionados["Poços"][i]
+
+            if placa not in df_filtrado_com_std:
+                df_filtrado_com_std[placa] = {}
+                df_filtrado_com_std[placa][poço] = df_sem_triplicatas_com_std[placa][poço]
+
+            else:
+                df_filtrado_com_std[placa][poço] = df_sem_triplicatas_com_std[placa][poço]
+
+        return df_filtrado_com_std
+
+
+    else:
+
+        for placa, poço in zip(tabela["Placa"], tabela["Poços"]):
+
+            lista_std = []
+            for i in range(len(df_sem_triplicatas[placa][poço]["y_experimental"])):
+                media = df_sem_triplicatas[placa][poço]["y_experimental"][i]
+
+                std = 0 
+                soma = 0
+
+                for o in range(1,3):
+                    soma += ((df_com_triplicatas[placa][poço].iloc[:,o][i] - media) ** 2)
+
+                std = np.sqrt(soma/3)
+
+                lista_std.append(std)
+
+            df_sem_triplicatas_com_std[placa][poço]["std"] = lista_std
+
+        df_filtrado_com_std = {}
+
+
+        for i in range(len(poços_selecionados['Placa'])):
+            
+            placa = poços_selecionados["Placa"][i]
+            poço = poços_selecionados["Poços"][i]
+
+            if placa not in df_filtrado_com_std:
+                df_filtrado_com_std[placa] = {}
+                df_filtrado_com_std[placa][poço] = df_sem_triplicatas_com_std[placa][poço]
+
+            else:
+                df_filtrado_com_std[placa][poço] = df_sem_triplicatas_com_std[placa][poço]
+
+
+        return df_filtrado_com_std
+
+
+#         --------------------- Função que gera gráficos --------------------
+
+
+def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
+    """
+    Args:
+        df (dict): Dicionário contendo o dataset das placas e poços.
+        titulo (str): Título do gráfico.
+        legenda_x (str): Legenda do eixo x.
+        legenda_y (str): Legenda do eixo y.
+        legendas (list): Lista de legendas/nome de cada um dos poços.
+        fonte_selecionada (str): Fonte selecionada para o texto.
+        tamanho_legenda (str, optional): Tamanho da fonte da legenda nos eixos. Padrão: "12pt".
+        tamanho_titulo (str, optional): Tamanho da fonte do título. Padrão: "14pt".
+    """
+    
+    # Configurações adicionais de fonte
+    tamanho_titulo = f"{tamanho_titulo}pt"
+    tamanho_legenda = f"{tamanho_legenda}pt"
+
+    # Criar a figura
+    p = figure(
+        title=titulo,
+        x_axis_label=legenda_x,
+        y_axis_label=legenda_y,
+        width=700,
+        height=400,
+        background_fill_color="white",
+        border_fill_color="white",
+        tools="box_zoom,reset,save, xwheel_zoom, crosshair, hover"
+    )
+
+    hover = p.select_one(HoverTool)
+    hover.tooltips = """
+        <div>
+            <div><strong>Coordenadas:</strong> (@y, @x)</div>
+        </div>
+    """
+
+    # Configuração do título e dos eixos
+    p.title.text_font = fonte_selecionada
+    p.title.text_font_size = tamanho_titulo
+    p.title.align = "center"
+    p.title.text_color = "black"
+    p.xaxis.axis_label_text_font = fonte_selecionada
+    p.yaxis.axis_label_text_font = fonte_selecionada
+    p.xaxis.axis_label_text_font_size = tamanho_legenda
+    p.yaxis.axis_label_text_font_size = tamanho_legenda
+    p.xaxis.axis_label_text_color = "#000000"
+    p.yaxis.axis_label_text_color = "#000000"
+    p.xaxis.axis_label_text_font_style = "bold"
+    p.yaxis.axis_label_text_font_style = "bold"
+
+    # Cores para os gráficos
+    colors = Dark2[8]
+    legend_items = []
+
+    # Checkbox para mostrar/ocultar erro
+    mostrar_std = st.checkbox("Mostrar Desvio Padrão", value=True)
+
+    # Itera sobre as placas e poços para plotar os dados
+    for i in range(len(poços_selecionados["Placa"])):
+        placa = poços_selecionados["Placa"][i]
+        poço = poços_selecionados["Poços"][i]
+
+        # Acessa os dados do dicionário
+        tempo = df[placa][poço]["Tempo(horas)"]
+        y_exp = df[placa][poço]["y_experimental"]
+        std = df[placa][poço]["std"]
+
+        # Cria uma fonte de dados para Bokeh
+        source = ColumnDataSource(data={
+            'x': tempo,
+            'y': y_exp,
+            'std': std,
+            'upper': y_exp + std,
+            'lower': y_exp - std
+        })
+
+        # Plota a linha de y_esperimental
+        linha = p.line(
+            'x', 'y',
+            source=source,
+            line_width=2.5,
+            line_alpha=0.9,
+            color=colors[i % len(colors)]
+        )
+
+        # Condicional para mostrar ou não os whiskers
+        if mostrar_std:
+            # Adiciona barras de erro (Whiskers) usando as colunas 'upper' e 'lower'
+            whisker = Whisker(base='x', upper='upper', lower='lower', dimension='height', source=source,
+                              upper_head=None, lower_head=None, line_color=colors[i % len(colors)])
+            p.add_layout(whisker)
+
+        # Adiciona a legenda correta para o poço atual
+        legend_item = LegendItem(label=legendas[i], renderers=[linha])
+        legend_items.append(legend_item)
+
+    # Adiciona a legenda no gráfico
+    legend = Legend(items=legend_items)
+    p.add_layout(legend)
+    p.legend.location = "bottom_right"
+
+    # Exibe o gráfico no Streamlit
+    st.bokeh_chart(p)
+
+
+
+def gera_tres_graficos(df_comtriplicatas, df_selecionados):
+    
+    
+    placas_e_poços = []
+
+    for i in range(len(df_selecionados["Placa"])):
+        poço_placa = f"{df_selecionados["Placa"][i]}-{df_selecionados["Poços"][i]}"    
+        placas_e_poços.append(poço_placa)
+
+    poço_escolhido = st.selectbox("Selecione seu poço", ["Nenhum"] + placas_e_poços)
+
+    
+    if poço_escolhido != "Nenhum":
+
+        i = placas_e_poços.index(poço_escolhido)
+
+        placa = df_selecionados["Placa"][i]
+        poços = df_selecionados["Poços"][i]
+
+        x = df_comtriplicatas[placa][poços]["Tempo(horas)"]
+
+        # Criando três colunas no Streamlit para exibir os gráficos lado a lado
+        col1, col2, col3 = st.columns(3)
+
+        
+        for idx, coluna in enumerate(df_comtriplicatas[placa][poços].columns[1:4]):  # Limita a três colunas
+            y = df_comtriplicatas[placa][poços][coluna]
+
+            # Criando o gráfico para cada coluna de dados
+            fig, ax = plt.subplots()
+            ax.plot(x, y, label=coluna)
+            ax.set_xlabel("Tempo(horas)")
+            ax.set_ylabel(coluna)
+            ax.legend()
+            
+            # Selecionando a coluna para exibir o gráfico
+            if idx == 0:
+                col1.pyplot(fig)
+            elif idx == 1:
+                col2.pyplot(fig)
+            elif idx == 2:
+                col3.pyplot(fig)
+    else:
+        st.write("Nenhum poço foi escolhido para análise ainda.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Códigos descontinuados :
+
 
 def filtra_dataset(df, dici_selecionados):
     """
@@ -731,8 +892,6 @@ def filtra_dataset(df, dici_selecionados):
                     df_filtrado[placa][poco] = df[placa][poco]
 
     return df_filtrado
-
-#         --------------------- Função que gera gráficos --------------------
 
 
 def plota_dataset_selecionado_para_linear(df, titulo, legenda_x, legenda_y, legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
@@ -816,54 +975,8 @@ def plota_dataset_selecionado_para_linear(df, titulo, legenda_x, legenda_y, lege
     
     st.bokeh_chart(p)
 
-def gera_tres_graficos(df_comtriplicatas, df_selecionados):
-    
-    
-    placas_e_poços = []
 
-    for i in range(len(df_selecionados["Placa"])):
-        poço_placa = f"{df_selecionados["Placa"][i]}-{df_selecionados["Poços"][i]}"    
-        placas_e_poços.append(poço_placa)
-
-    poço_escolhido = st.selectbox("Selecione seu poço", ["Nenhum"] + placas_e_poços)
-
-    
-    if poço_escolhido != "Nenhum":
-
-        i = placas_e_poços.index(poço_escolhido)
-
-        placa = df_selecionados["Placa"][i]
-        poços = df_selecionados["Poços"][i]
-
-        x = df_comtriplicatas[placa][poços]["Tempo(horas)"]
-
-        # Criando três colunas no Streamlit para exibir os gráficos lado a lado
-        col1, col2, col3 = st.columns(3)
-
-        
-        for idx, coluna in enumerate(df_comtriplicatas[placa][poços].columns[1:4]):  # Limita a três colunas
-            y = df_comtriplicatas[placa][poços][coluna]
-
-            # Criando o gráfico para cada coluna de dados
-            fig, ax = plt.subplots()
-            ax.plot(x, y, label=coluna)
-            ax.set_xlabel("Tempo(horas)")
-            ax.set_ylabel(coluna)
-            ax.legend()
-            
-            # Selecionando a coluna para exibir o gráfico
-            if idx == 0:
-                col1.pyplot(fig)
-            elif idx == 1:
-                col2.pyplot(fig)
-            elif idx == 2:
-                col3.pyplot(fig)
-    else:
-        st.write("Nenhum poço foi escolhido para análise ainda.")
-
-
-
-def plota_dataset_selecionado_padrao(df, titulo, legenda_x, legenda_y, legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
+def plota_dataset_selecionado_final_substituído(df, titulo, legenda_x, legenda_y, legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
     """
     Args:
         df (dict): Dicionário contendo o dataset das placas e poços.
@@ -875,7 +988,9 @@ def plota_dataset_selecionado_padrao(df, titulo, legenda_x, legenda_y, legenda, 
         tamanho_legenda (str, optional): Tamanho da fonte da legenda nos eixos. Padrão: "12pt".
         tamanho_titulo (str, optional): Tamanho da fonte do título. Padrão: "14pt".
     """
+    st.write(df)
     
+
     # Configurações adicionais de fonte
     tamanho_titulo = f"{tamanho_titulo}pt"
     tamanho_legenda = f"{tamanho_legenda}pt"
@@ -889,8 +1004,15 @@ def plota_dataset_selecionado_padrao(df, titulo, legenda_x, legenda_y, legenda, 
         height=400,
         background_fill_color="white",
         border_fill_color="white",
-        tools="box_zoom,reset,save"
+        tools="box_zoom,reset,save, xwheel_zoom, crosshair, hover"
     )
+
+    hover = p.select_one(HoverTool)
+    hover.tooltips = """
+        <div>
+            <div><strong>Coordenadas:</strong> (@y, @x)</div>
+        </div>
+    """
 
     # Configuração do título e dos eixos
     p.title.text_font = fonte_selecionada
@@ -911,7 +1033,7 @@ def plota_dataset_selecionado_padrao(df, titulo, legenda_x, legenda_y, legenda, 
     legend_items = []
 
     # Checkbox para mostrar/ocultar erro
-    mostrar_erro = st.checkbox("Mostrar Erro", value=True)
+    mostrar_std = st.checkbox("Mostrar Desvio Padrão", value=True)
 
     # Itera sobre as placas e poços para plotar os dados
     for idx_placa, (placa, poços) in enumerate(df.items()):
@@ -920,19 +1042,17 @@ def plota_dataset_selecionado_padrao(df, titulo, legenda_x, legenda_y, legenda, 
             if isinstance(data, dict) or isinstance(data, pd.DataFrame):
                 # Acessa os dados
                 tempo = data["Tempo(horas)"]
-                y_exp = data["y_experimental"]
-                y_prev = data["y_previsto"]
+                y_exp = data["y_experimental"]                                         
+                std = data["std"]
 
-                # Calcula o erro absoluto entre y_esperimental e y_previsto
-                erro = abs(y_exp - y_prev)
 
                 # Cria uma fonte de dados para Bokeh
                 source = ColumnDataSource(data={
                     'x': tempo,
                     'y': y_exp,
-                    'erro': erro,
-                    'upper': y_exp + erro,
-                    'lower': y_exp - erro
+                    'std': std,
+                    'upper': y_exp + std,
+                    'lower': y_exp - std
                 })
 
                 # Plota a linha de y_esperimental
@@ -945,7 +1065,7 @@ def plota_dataset_selecionado_padrao(df, titulo, legenda_x, legenda_y, legenda, 
                 )
 
                 # Condicional para mostrar ou não os whiskers
-                if mostrar_erro:
+                if mostrar_std:
                     # Adiciona barras de erro (Whiskers) usando as colunas 'upper' e 'lower'
                     whisker = Whisker(base='x', upper='upper', lower='lower', dimension='height', source=source,
                                       upper_head=None, lower_head=None, line_color=colors[(idx_placa + idx_poco) % len(colors)])
