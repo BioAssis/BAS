@@ -1,18 +1,9 @@
 #Importar as bibliotecas
-import numpy as np
 import pandas as pd
-import streamlit as st
-from faker import Faker
-from lmfit import Model
+import streamlit as st   # type: ignore
 import funcoes_bas as fbas
-import seaborn as sns
 import copy
-import matplotlib.pyplot as plt
-from bokeh.plotting import figure, show
-from bokeh.io import output_notebook
-from bokeh.models import Legend, LegendItem
-from bokeh.palettes import Dark2
-from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode
+from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode   # type: ignore
 
 
 st.set_page_config(layout="wide")

@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-st.title("Importação & Seleção de Dados")
+st.title("Sobre Nós")
 
 
 

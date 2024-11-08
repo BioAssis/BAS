@@ -1,7 +1,27 @@
 import streamlit as st
 
 
-st.title("BAS")
+
+st.title("Bem vindo ao BAS")
+
+st.write("Um software especializado em bioprocessamento de dados obtidos do growth profiler. Comece agora seu trabalho clicando em 'Importar Dados' e caso queira conhecer mais sobre nosso trabalho clique em 'Saiba Mais'.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 st.sidebar.markdown("<br>" * 12, unsafe_allow_html=True)
 

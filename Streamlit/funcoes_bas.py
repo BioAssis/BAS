@@ -4,12 +4,10 @@ import copy
 import matplotlib.pyplot as plt
 from lmfit import Model
 import streamlit as st # type: ignore
-import seaborn as sns
-from bokeh.plotting import figure, show
-from bokeh.io import output_notebook
-from bokeh.palettes import Dark2
-from bokeh.models import ColumnDataSource, LineEditTool, Legend, LegendItem, HoverTool
-from bokeh.models import Whisker
+from bokeh.plotting import figure  # type: ignore
+from bokeh.palettes import Dark2   # type: ignore
+from bokeh.models import ColumnDataSource, Legend, LegendItem, HoverTool   # type: ignore
+from bokeh.models import Whisker   # type: ignore
 
 
 #______________________________________________________________________________________________________________________________________________
