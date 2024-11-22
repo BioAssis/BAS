@@ -18,4 +18,7 @@ fn.importar_e_selecionar()
 
 st.sidebar.markdown("<br>" * 11, unsafe_allow_html=True)
 
-st.sidebar.image("/home/ABTLUS/daniel23020/Documentos/ILUM/4° Semestre/IP/BAS/BAS_1.1/midias/logo.jpeg", use_column_width=True)
+
+url_imagem = "https://github.com/BioAssis/BAS/blob/main/BAS_1.1/midias/logo.jpeg"
+
+st.sidebar.image(url_imagem, use_column_width=True)

@@ -28,4 +28,7 @@ with colunas[0]:
 
 st.sidebar.markdown("<br>" * 12, unsafe_allow_html=True)
 
-st.sidebar.image("/home/ABTLUS/daniel23020/Documentos/ILUM/4° Semestre/IP/BAS/BAS_1.1/midias/logo.jpeg", use_column_width=True)
+
+url_imagem = "https://github.com/BioAssis/BAS/blob/main/BAS_1.1/midias/logo.jpeg"
+
+st.sidebar.image(url_imagem, use_column_width=True)
