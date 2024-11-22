@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st # type: ignore
 
 
 
@@ -8,6 +8,8 @@ st.write("Um software especializado em bioprocessamento de dados obtidos do grow
 
 
 
+
+st.markdown("<br>" * 4, unsafe_allow_html=True)
 colunas = st.columns(4)
 
 with colunas[3]: 

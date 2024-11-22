@@ -17,14 +17,15 @@ def importar_e_selecionar():
 
 
     dados_brutos = fn.importar_arquivos()
+
     if len(dados_brutos) != 0:
 
+        st.markdown("<br>" * 2, unsafe_allow_html=True)
             
         df_dict_com_triplicata, df_dict_sem_triplicata = fn.arquivos_to_placas(dados_brutos)  # Gera os 2 dfs, com e sem triplicata.
 
-        
-        dici_final = copy.deepcopy(df_dict_sem_triplicata) # Copia o df para não alterar o arquivo fonte
-
+        dici_final = copy.deepcopy(df_dict_sem_triplicata) # Copia o df-sem-triplicata para não alterar o arquivo fonte
+        dici_final_com_triplicatas = copy.deepcopy(df_dict_com_triplicata) # Copia o df-com-triplicata para não alterar o arquivo fonte
 
         poços_selecionados = None
 
@@ -36,44 +37,45 @@ def importar_e_selecionar():
         poços_selecionados = fn.seleciona_da_tabela(df_tabela) # Caso não exista poço selecionado cria a grid de seleção.
 
 
-        
+        st.header("Poços Selecionados")
+
         if poços_selecionados is not None and len(poços_selecionados) > 0:
-            st.header("Poços Selecionados")
+
             st.write(poços_selecionados)
 
 
-
             st.header("Análise individual:")
-            fn.gerar_tres_graficos(df_dict_com_triplicata,poços_selecionados)
-
-
-
-
-        # Inicializa as variáveis no session_state na primeira execução
-
-        if 'botton_print' not in st.session_state:
-            st.session_state['botton_print'] = False  # Começa desligado
-            
-        if 'a' not in st.session_state:
-            st.session_state['a'] = []
-            # Inicializa como None
-
-
-
-
-
-        st.session_state['botton_print'] = not st.session_state['botton_print']
-
-        if st.session_state['botton_print']:
-            st.session_state['dici_final'] = dici_final
-            st.session_state['poços'] = poços_selecionados    
+            fn.gerar_tres_graficos(dici_final_com_triplicatas,poços_selecionados)
 
         else:
-            st.write("Nenhum poço selecioando ainda.")
+            st.write("Nenhum poço selecionado até o momento.")
 
         
+
+
+        st.markdown("<br>" * 1, unsafe_allow_html=True)
+
+
+        colunas = st.columns(4)
+
+        with colunas[3]:
+
+            if st.button("Tratamento de Dados"):
+
+                st.session_state.dici_final = dici_final  #Criando o session_state dici_final 
+
+                st.session_state.dici_final_com_triplicatas = dici_final_com_triplicatas #Criando o session_state dici_final_com_triplicatas.
+
+                st.session_state.poços_selecionados = poços_selecionados #Criando o session_state poços_selecio
+
+                st.switch_page("pages/Tratamento_&_Plotagem.py")
+        
+        
     else:
-        st.write("Selecione um arquivo clicando logo acima.")    
+        st.write("Selecione um arquivo clicando logo acima.")   
+
+
+    
 
 
 

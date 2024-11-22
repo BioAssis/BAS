@@ -16,7 +16,7 @@ from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode
 def importar_arquivos():
 
     uploaded_files = st.file_uploader(
-        "Olá usuário, clique abaixo e selecione o arquivo .xlsx que desejar.", 
+        " ", 
         type=["xlsx", "csv", "txt"], 
         accept_multiple_files=True, 
         key="import"
@@ -365,6 +365,66 @@ def growth_score(k, Nmax, y_0 = 0):
     """
     return (Nmax - y_0) + 0.25*k
 
+#------------------------------------------ Escolhendo o modelo e outras Variáveis -------------------------
+
+def escolher_modelo():
+    """ Essa função cria as caixas de seleção e de input, as quais são essenciais pra definir variáveis para a modelagem.
+
+    Returns:
+        String: Modelo escolhido para ser usado na modelagem.
+        float: Inicio da fase log e fim da fase lag.
+        float: Fim da fase log.
+    """
+
+    modelo_escolhido = st.selectbox(
+        'Modelos Possíveis',
+        ["Gompertz", "Zwietering", "Linear", "Exponencial"],  
+        index=0
+    )
+
+
+    if modelo_escolhido == "Gompertz":
+        colunas = st.columns(2)
+
+        with colunas[0]:
+            ini_log = int(st.number_input("Insira o primeiro valor:", value=0.0, format="%.2f", step=0.5))
+                
+        with colunas[1]:     
+            fim_log = int(st.number_input("Insira o segundo valor:", value=30.0, format="%.2f", step=0.5)) 
+
+    elif modelo_escolhido == "Zwietering":
+        colunas = st.columns(2)
+
+        with colunas[0]:
+            ini_log = int(st.number_input("Insira o primeiro valor:", value=0.0, format="%.2f", step=0.5))
+                
+        with colunas[1]:     
+            fim_log = int(st.number_input("Insira o segundo valor:", value=30.0, format="%.2f", step=0.5)) 
+    
+    elif modelo_escolhido == "Linear":
+        colunas = st.columns(2)
+
+        with colunas[0]:
+            ini_log = int(st.number_input("Insira o primeiro valor:", value=5.0, format="%.2f", step=0.5))
+                
+        with colunas[1]:     
+            fim_log = int(st.number_input("Insira o segundo valor:", value=12.0, format="%.2f", step=0.5)) 
+    
+    elif modelo_escolhido == "Exponencial":
+        colunas = st.columns(2)
+
+        with colunas[0]:
+            ini_log = int(st.number_input("Insira o primeiro valor:", value=5.0, format="%.2f", step=0.5))
+                
+        with colunas[1]:     
+            fim_log = int(st.number_input("Insira o segundo valor:", value=12.0,format="%.2f", step=0.5)) 
+
+    else:
+        ini_log = 0      
+        fim_log = 0
+
+    return modelo_escolhido, ini_log, fim_log
+
 
 #------------------------------------------ Gerando Tabela ----------------------------------------------------
 
@@ -385,7 +445,6 @@ S
         dicionario: Dicionário que recebe os parametros das curvas fitadas para o crescimento de cada um dos poços selecionados pelo usuário. 
     """
 
-    dici_final = copy.deepcopy(df_original)
 
     inicio_intervalo = 2 * ini_log
 
@@ -406,6 +465,9 @@ S
 
 
     if modelo_escolhido == "Gompertz":
+
+        dici_final = copy.deepcopy(df_original)
+
         
         if df_selecionados is None:
             for placa in dici_final:
@@ -496,6 +558,7 @@ S
         
 
     if modelo_escolhido == "Zwietering":
+        dici_final = copy.deepcopy(df_original)
 
         for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
                 
@@ -538,6 +601,7 @@ S
             
         
     if modelo_escolhido == "Linear":
+        dici_final = copy.deepcopy(df_original)
          
         for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
 
@@ -546,7 +610,8 @@ S
 
             modelo_linear = Model(linear)
 
-            log_column = np.log(y)
+            offset = 1e-10  # Escolha um valor pequeno apropriado para o seu caso
+            log_column = np.log(y + 1)
 
             inicio_intervalo = 2 * ini_log
 
@@ -557,15 +622,25 @@ S
 
             log_column_intervalo = log_column[inicio_intervalo:fim_intervalo+1]
 
+
+            if (y < 0).any():
+                raise ValueError("Valores Negativos")
+
+            
+
             # Definir parâmetros iniciais
             params = modelo_linear.make_params(slope=1, intercept=0)
 
             # Fazer o ajuste apenas no intervalo selecionado
             resultado_fit = modelo_linear.fit(log_column_intervalo, params, t=x_intervalo)
             
+            
             A = max(y)
 
             y_predito = resultado_fit.best_fit
+
+            
+
             ss_total = np.sum((log_column_intervalo - np.mean(log_column_intervalo)) ** 2)
             ss_residual = np.sum((log_column_intervalo - y_predito) ** 2)
             r2 = 1 - (ss_residual / ss_total)
@@ -585,6 +660,7 @@ S
 
 
     if modelo_escolhido == "Exponencial":
+        dici_final = copy.deepcopy(df_original)
         
         for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
                 
@@ -757,7 +833,77 @@ def gerar_df_com_std(df_sem_triplicatas, df_com_triplicatas, poços_selecionados
 #  --------------------- Função que gera gráficos --------------------
 
 
-def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
+def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela_final):
+
+    with st.expander("Opções de edição do Gráfico"):
+        st.write("Aqui está um exemplo de um gráfico:")
+        colunas = st.columns(4)
+
+        with colunas[0]:
+            xlabel = st.text_input('Rótulo do Eixo X', 'Tempo (horas)') 
+            ylabel = st.text_input('Rótulo do Eixo Y', 'Green Value')
+
+
+        with colunas[1]:
+            titulo = st.text_input('Título do Gráfico', 'Crescimento Médio(Green Value x Tempo)')
+            fonte_selecionada = st.selectbox(
+                "Escolha a fonte do gráfico:",
+                ["Arial", "Times New Roman", "Helvetica"])
+
+
+        with colunas[2]:
+            tamanho_legenda = st.number_input("Tamanho da legenda", value=12, step=1)
+            tamanho_titulo = st.number_input("Tamanho do titulo", value=14, step=1)
+
+
+        with colunas[3]:
+            desvio_padrao = st.checkbox(" Desvio Padrão", value=True)
+
+
+
+        legendas_padrao = gerar_legendas(df_tabela_final)
+
+        
+        legendas = []
+
+        
+        opcao_legenda = st.selectbox(
+            'Legendas',
+            ["Padrão", "Manual"],  # Opções
+            index=0
+        )
+
+        if opcao_legenda == "Padrão":
+            legendas = legendas_padrao
+
+
+        else:
+            colunas = st.columns(2)
+
+            terco = len(legendas_padrao) // 2 
+            excesso = len(legendas_padrao) % 2  # Excesso de elementos ao dividir por 3
+
+
+            # Coloca os valores em cada coluna, considerando o excesso
+            with colunas[0]:
+                for col in legendas_padrao[0:terco + (1 if excesso > 0 else 0)]:
+                    legenda = st.text_input(f"Legenda: {col}", value=col)
+                    legendas.append(legenda)
+
+
+            with colunas[1]:
+                for col in legendas_padrao[terco + (1 if excesso > 0 else 0):]:
+                    legenda = st.text_input(f"Legenda: {col}", value=col)
+                    legendas.append(legenda)
+
+    
+    plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo, desvio_padrao)
+
+
+
+
+
+def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt", desvio=True):
     """
     Args:
         df (dici): Dicionário contendo o dataset das placas e poços.
@@ -812,7 +958,7 @@ def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, 
     legend_items = []
 
     # Checkbox para mostrar/ocultar erro
-    mostrar_std = st.checkbox("Mostrar Desvio Padrão", value=True)
+    mostrar_std = desvio
 
     # Itera sobre as placas e poços para plotar os dados
     for i in range(len(poços_selecionados["Placa"])):
@@ -878,7 +1024,7 @@ def gerar_tres_graficos(df_comtriplicatas, df_selecionados):
         poço_placa = f"{df_selecionados["Placa"][i]}-{df_selecionados["Poços"][i]}"    
         placas_e_poços.append(poço_placa)
 
-    poço_escolhido = st.selectbox("Selecione uma triplicata para aálise individual", ["Nenhum"] + placas_e_poços)
+    poço_escolhido = st.selectbox("Selecione uma triplicata para análise individual", ["Nenhum"] + placas_e_poços)
 
     
     if poço_escolhido != "Nenhum":
@@ -911,8 +1057,7 @@ def gerar_tres_graficos(df_comtriplicatas, df_selecionados):
                 col2.pyplot(fig)
             elif idx == 2:
                 col3.pyplot(fig)
-    else:
-        st.write("Nenhum poço foi escolhido para análise ainda.")
+
 
 
 
