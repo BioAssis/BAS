@@ -9,10 +9,10 @@ import funcoes.funcoes_gerais as fn
 def iniciar_tratamento_plotagem():
 
     if 'poços_selecionados' in st.session_state:
-        poços_selecionados = st.session_state.poços_selecionados
-        dici_final = st.session_state.dici_final
-        dici_final_com_triplicatas = st.session_state.dici_final_com_triplicatas
-
+        poços_selecionados = st.session_state.poços_selecionados  # Definindo cada uma dessas variáveis atravez da função.
+        dici_final = copy.deepcopy(st.session_state.dici_final)   # Definindo cada uma dessas variáveis atravez da função.
+        dici_final_com_triplicatas = st.session_state.dici_final_com_triplicatas   # Definindo cada uma dessas variáveis atravez da função.
+ 
             
         modelo_escolhido, ini_log, fim_log = fn.escolher_modelo() # Definindo cada uma dessas variáveis atravez da função. 
             

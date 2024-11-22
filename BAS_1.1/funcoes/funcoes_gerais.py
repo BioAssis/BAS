@@ -429,7 +429,6 @@ def escolher_modelo():
 #------------------------------------------ Gerando Tabela ----------------------------------------------------
 
 
-
 def gerar_tabela(df_original,df_selecionados, modelo_escolhido = "Gompertz", ini_log = 0, fim_log = 0):
     """ Essa função recebe 5 parametros, e devolve um dicionario contendo os parametros específicos do cresciemnto populacional de cada poço especificado 
     pela variável df_selecionados.
@@ -445,6 +444,7 @@ S
         dicionario: Dicionário que recebe os parametros das curvas fitadas para o crescimento de cada um dos poços selecionados pelo usuário. 
     """
 
+    dici_final = copy.deepcopy(df_original)
 
     inicio_intervalo = 2 * ini_log
 
@@ -465,9 +465,6 @@ S
 
 
     if modelo_escolhido == "Gompertz":
-
-        dici_final = copy.deepcopy(df_original)
-
         
         if df_selecionados is None:
             for placa in dici_final:
@@ -558,7 +555,6 @@ S
         
 
     if modelo_escolhido == "Zwietering":
-        dici_final = copy.deepcopy(df_original)
 
         for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
                 
@@ -601,7 +597,6 @@ S
             
         
     if modelo_escolhido == "Linear":
-        dici_final = copy.deepcopy(df_original)
          
         for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
 
@@ -610,8 +605,7 @@ S
 
             modelo_linear = Model(linear)
 
-            offset = 1e-10  # Escolha um valor pequeno apropriado para o seu caso
-            log_column = np.log(y + 1)
+            log_column = np.log(y)
 
             inicio_intervalo = 2 * ini_log
 
@@ -622,25 +616,15 @@ S
 
             log_column_intervalo = log_column[inicio_intervalo:fim_intervalo+1]
 
-
-            if (y < 0).any():
-                raise ValueError("Valores Negativos")
-
-            
-
             # Definir parâmetros iniciais
             params = modelo_linear.make_params(slope=1, intercept=0)
 
             # Fazer o ajuste apenas no intervalo selecionado
             resultado_fit = modelo_linear.fit(log_column_intervalo, params, t=x_intervalo)
             
-            
             A = max(y)
 
             y_predito = resultado_fit.best_fit
-
-            
-
             ss_total = np.sum((log_column_intervalo - np.mean(log_column_intervalo)) ** 2)
             ss_residual = np.sum((log_column_intervalo - y_predito) ** 2)
             r2 = 1 - (ss_residual / ss_total)
@@ -660,7 +644,6 @@ S
 
 
     if modelo_escolhido == "Exponencial":
-        dici_final = copy.deepcopy(df_original)
         
         for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
                 
@@ -701,7 +684,7 @@ S
             tabela["Growth Score"].append(GS)
                 
         
-        return tabela  
+        return tabela   
 
 
 # -------------------------- Funçoes prontas -------------------------

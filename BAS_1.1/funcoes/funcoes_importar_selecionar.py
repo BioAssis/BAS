@@ -15,8 +15,19 @@ import funcoes.funcoes_gerais as fn
 
 def importar_e_selecionar():
 
+    
 
-    dados_brutos = fn.importar_arquivos()
+    if 'dados_salvos' not in st.session_state:
+        dados_brutos = fn.importar_arquivos()
+
+    else:
+        dados_salvos = copy.deepcopy(st.session_state.dados_salvos)
+        dados_atuais = fn.importar_arquivos()
+
+        dados_brutos = dados_salvos + dados_atuais
+
+
+    
 
     if len(dados_brutos) != 0:
 
@@ -67,6 +78,8 @@ def importar_e_selecionar():
                 st.session_state.dici_final_com_triplicatas = dici_final_com_triplicatas #Criando o session_state dici_final_com_triplicatas.
 
                 st.session_state.poços_selecionados = poços_selecionados #Criando o session_state poços_selecio
+
+                st.session_state.dados_salvos = dados_brutos #Criando o session_state poços_selecionados
 
                 st.switch_page("pages/Tratamento_&_Plotagem.py")
         
