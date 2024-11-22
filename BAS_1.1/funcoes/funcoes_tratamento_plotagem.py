@@ -19,10 +19,9 @@ def iniciar_tratamento_plotagem():
         
         df_tabela_final = fn.gerar_tabela(dici_final,poços_selecionados, modelo_escolhido, ini_log, fim_log)  #Tabela mostrada quando clicado em mostrar tabela, literalmente a tabela final.
     
-        
         df_sem_triplicata_com_std = fn.gerar_df_com_std(dici_final, dici_final_com_triplicatas, poços_selecionados, modelo_escolhido) # IMPORTANTE !!!!!!!
            
-        fn.gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados, df_tabela_final)
+        fn.gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados, df_tabela_final, ini_log,fim_log)
     
 
         if st.button("Gerar Tabela"):   #Mostrar tabela

@@ -7,8 +7,9 @@ import streamlit as st # type: ignore
 from bokeh.plotting import figure  # type: ignore
 from bokeh.palettes import Dark2   # type: ignore
 from bokeh.models import ColumnDataSource, Legend, LegendItem, HoverTool   # type: ignore
-from bokeh.models import Whisker   # type: ignore
+from bokeh.models import Whisker, Span  # type: ignore
 from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode   # type: ignore
+
 
 #______________________________________________________________________________________________________________________________________________
 
@@ -459,6 +460,7 @@ S
             "μMax": [],
             "A": [],
             "Fase lag": [],
+            "Intervalo(hrs)": [],
             "Growth Score": [],
             "R²": [],
             }
@@ -467,6 +469,17 @@ S
     if modelo_escolhido == "Gompertz":
         
         if df_selecionados is None:
+
+            tabela = {
+                "Placa": [],
+                "Poços": [],
+                "μMax": [],
+                "A": [],
+                "Fase lag": [],
+                "Growth Score": [],
+                "R²": [],
+            }
+
             for placa in dici_final:
                 for poço in dici_final[placa]:
 
@@ -544,13 +557,13 @@ S
 
                 tabela["Placa"].append(placa)
                 tabela["Poços"].append(poço)
-                tabela["R²"].append(r2)
                 tabela['μMax'].append(resultado_fit.params["k"].value)
                 tabela['A'].append(resultado_fit.params["Nmax"].value)
                 tabela["Fase lag"].append(resultado_fit.params["tlag"].value  - ini_log)
+                tabela["Intervalo(hrs)"].append(f"{ini_log} - {fim_log}")
                 tabela["Growth Score"].append(GS)
+                tabela["R²"].append(r2)
                 
-            
             return tabela
         
 
@@ -589,6 +602,7 @@ S
             tabela['μMax'].append(resultado_fit.params["k"].value)
             tabela['A'].append(resultado_fit.params["Nmax"].value)
             tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
+            tabela["Intervalo(hrs)"].append(f"{ini_log} - {fim_log}")
             tabela["Growth Score"].append(GS)
         
         
@@ -599,6 +613,7 @@ S
     if modelo_escolhido == "Linear":
          
         for placa, poço in zip(df_selecionados["Placa"], df_selecionados["Poços"]):
+
 
             x = dici_final[placa][poço]["Tempo(horas)"]
             y = dici_final[placa][poço]["y_experimental"]
@@ -615,6 +630,12 @@ S
             x_intervalo = x[inicio_intervalo:fim_intervalo+1]
 
             log_column_intervalo = log_column[inicio_intervalo:fim_intervalo+1]
+
+
+            if len(x_intervalo) != len(log_column_intervalo):
+                st.write("Erroooooo")
+
+
 
             # Definir parâmetros iniciais
             params = modelo_linear.make_params(slope=1, intercept=0)
@@ -637,6 +658,7 @@ S
             tabela['μMax'].append(resultado_fit.params["slope"].value)
             tabela['A'].append(A)
             tabela["Fase lag"].append(ini_log)
+            tabela["Intervalo(hrs)"].append(f"{ini_log} - {fim_log}")
             tabela["Growth Score"].append(GS)
         
         return tabela  
@@ -681,6 +703,7 @@ S
             tabela['μMax'].append(resultado_fit.params["k"].value)
             tabela['A'].append(A)
             tabela["Fase lag"].append(ini_log)
+            tabela["Intervalo(hrs)"].append(f"{ini_log} - {fim_log}")
             tabela["Growth Score"].append(GS)
                 
         
@@ -816,7 +839,7 @@ def gerar_df_com_std(df_sem_triplicatas, df_com_triplicatas, poços_selecionados
 #  --------------------- Função que gera gráficos --------------------
 
 
-def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela_final):
+def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela_final, ini_log,fim_log):
 
     with st.expander("Opções de edição do Gráfico"):
         st.write("Aqui está um exemplo de um gráfico:")
@@ -840,8 +863,23 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
 
 
         with colunas[3]:
-            desvio_padrao = st.checkbox(" Desvio Padrão", value=True)
+            desvio_padrao = st.checkbox(" Mostrar Desvio Padrão", value=True)
+            
+            intervalo = st.checkbox(" Mostrar Intervalo", value=True)
 
+            posicao = st.selectbox(
+                'Posições',
+                ["Topo-Esquerda", "Topo-Direita","Canto-Esquerda", "Canto-Direita"],  # Opções
+                index=0
+                )
+            if posicao == "Topo-Esquerda":
+                posicao_legenda = "top_left"
+            elif posicao == "Topo-Direita":
+                posicao_legenda = "top_right"
+            elif posicao == "Canto-Esquerda":
+                posicao_legenda = "bottom_left"
+            elif posicao == "Canto-Direita":
+                posicao_legenda = "bottom_right"
 
 
         legendas_padrao = gerar_legendas(df_tabela_final)
@@ -880,13 +918,13 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
                     legendas.append(legenda)
 
     
-    plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo, desvio_padrao)
+    plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, posicao_legenda, fonte_selecionada, tamanho_legenda, tamanho_titulo, desvio_padrao, intervalo, ini_log, fim_log)
 
 
 
 
 
-def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt", desvio=True):
+def plota_dataset_selecionado_final_2(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt", desvio=True):
     """
     Args:
         df (dici): Dicionário contendo o dataset das placas e poços.
@@ -912,13 +950,13 @@ def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, 
         height=400,
         background_fill_color="white",
         border_fill_color="white",
-        tools="box_zoom,reset,save, xwheel_zoom, crosshair, hover"
+        tools="reset,save,xbox_zoom, crosshair, hover"
     )
 
     hover = p.select_one(HoverTool)
     hover.tooltips = """
         <div>
-            <div><strong>Coordenadas:</strong> (@y, @x)</div>
+            <div><strong>Coordenadas (x,y):</strong> (@x, @y)</div>
         </div>
     """
 
@@ -1041,6 +1079,143 @@ def gerar_tres_graficos(df_comtriplicatas, df_selecionados):
             elif idx == 2:
                 col3.pyplot(fig)
 
+
+# ------------- Função provisória -----------------
+
+
+
+def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, posicao_legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt", desvio=True, intervalo=True, ini_log=None, fim_log=None):
+    """
+    Args:
+        df (dici): Dicionário contendo o dataset das placas e poços.
+        titulo (string): Título do gráfico.
+        legenda_x (string): Legenda do eixo x.
+        legenda_y (string): Legenda do eixo y.
+        legendas (lista): Lista de legendas/nome de cada um dos poços.
+        fonte_selecionada (string): Fonte selecionada para o texto.
+        tamanho_legenda (string, optional): Tamanho da fonte da legenda nos eixos. Padrão: "12pt".
+        tamanho_titulo (string, optional): Tamanho da fonte do título. Padrão: "14pt".
+        desvio (bool, optional): Flag para mostrar ou ocultar barras de erro. Padrão: True.
+        ini_log (float, optional): Posição da primeira linha vertical (reta) no eixo x.
+        fim_log (float, optional): Posição da segunda linha vertical (reta) no eixo x.
+    """
+    
+
+    mostrar_grid = st.checkbox("Mostrar grid de fundo", value=True)
+
+    # Configurações adicionais de fonte
+    tamanho_titulo = f"{tamanho_titulo}pt"
+    tamanho_legenda = f"{tamanho_legenda}pt"
+
+    # Criar a figura
+    p = figure(
+        title=titulo,
+        x_axis_label=legenda_x,
+        y_axis_label=legenda_y,
+        width=700,
+        height=400,
+        background_fill_color="white",
+        border_fill_color="white",
+        tools="reset,save,xbox_zoom, crosshair, hover"
+    )
+
+    # Configurar a visibilidade do grid
+    p.xgrid.visible = mostrar_grid
+    p.ygrid.visible = mostrar_grid
+
+    hover = p.select_one(HoverTool)
+    hover.tooltips = """
+        <div>
+            <div><strong>Coordenadas (x,y):</strong> (@x, @y)</div>
+        </div>
+    """
+
+    # Configuração do título e dos eixos
+    p.title.text_font = fonte_selecionada
+    p.title.text_font_size = tamanho_titulo
+    p.title.align = "center"
+    p.title.text_color = "black"
+    p.xaxis.axis_label_text_font = fonte_selecionada
+    p.yaxis.axis_label_text_font = fonte_selecionada
+    p.xaxis.axis_label_text_font_size = tamanho_legenda
+    p.yaxis.axis_label_text_font_size = tamanho_legenda
+    p.xaxis.axis_label_text_color = "#000000"
+    p.yaxis.axis_label_text_color = "#000000"
+    p.xaxis.axis_label_text_font_style = "bold"
+    p.yaxis.axis_label_text_font_style = "bold"
+
+    # Cores para os gráficos
+    colors = Dark2[8]
+    legend_items = []
+
+    # Checkbox para mostrar/ocultar erro
+    mostrar_std = desvio
+
+    # Itera sobre as placas e poços para plotar os dados
+    for i in range(len(poços_selecionados["Placa"])):
+        placa = poços_selecionados["Placa"][i]
+        poço = poços_selecionados["Poços"][i]
+
+        # Acessa os dados do dicionário
+        tempo = df[placa][poço]["Tempo(horas)"]
+        y_exp = df[placa][poço]["y_experimental"]
+        std = df[placa][poço]["std"]
+
+        # Cria uma fonte de dados para Bokeh
+        source = ColumnDataSource(data={
+            'x': tempo,
+            'y': y_exp,
+            'std': std,
+            'upper': y_exp + std,
+            'lower': y_exp - std
+        })
+
+        # Plota a linha de y_esperimental
+        linha = p.line(
+            'x', 'y',
+            source=source,
+            line_width=2.5,
+            line_alpha=0.9,
+            color=colors[i % len(colors)]
+        )
+
+        # Condicional para mostrar ou não os whiskers
+        if mostrar_std:
+            # Adiciona barras de erro (Whiskers) usando as colunas 'upper' e 'lower'
+            whisker = Whisker(base='x', upper='upper', lower='lower', dimension='height', source=source,
+                              upper_head=None, lower_head=None, line_color=colors[i % len(colors)])
+            p.add_layout(whisker)
+
+        # Adiciona a legenda correta para o poço atual
+        legend_item = LegendItem(label=legendas[i], renderers=[linha])
+        legend_items.append(legend_item)
+
+    # Adiciona a legenda no gráfico
+    legend = Legend(items=legend_items)
+    p.add_layout(legend)
+    p.legend.location = posicao_legenda
+
+    # Checkbox para exibir as linhas verticais
+    intervalos = True
+
+    # Adiciona linhas verticais nas posições ini_log e fim_log, se fornecidas
+   
+    if intervalo:
+
+        if ini_log is not None:
+
+            # Cria uma linha vertical na posição ini_log
+            linha_vertical_ini = Span(location=ini_log, dimension='height', line_color='red', line_dash='dashed', line_width=2)
+            p.add_layout(linha_vertical_ini)
+
+        if fim_log is not None:
+
+            # Cria uma linha vertical na posição fim_log
+            linha_vertical_fim = Span(location=fim_log, dimension='height', line_color='red', line_dash='dashed', line_width=2)
+            p.add_layout(linha_vertical_fim)
+
+    # Exibe o gráfico no Streamlit
+    st.bokeh_chart(p)
 
 
 
