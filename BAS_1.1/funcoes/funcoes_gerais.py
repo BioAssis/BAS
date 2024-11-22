@@ -928,7 +928,7 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
 
     with colunas[1]:
 
-        st.subtitle("Tabela de Parametros")
+        st.markdown("## Tabela de Parametros:")
         tabela = pd.DataFrame(df_tabela_final)
         st.write(tabela)
 
