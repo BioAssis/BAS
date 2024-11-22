@@ -388,37 +388,37 @@ def escolher_modelo():
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Insira o primeiro valor:", value=0.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem:", value=0.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("Insira o segundo valor:", value=30.0, format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("Fim do Intervalo de Modelagem:", value=ini_log + 5.0, format="%.2f", step=0.5)) 
 
     elif modelo_escolhido == "Zwietering":
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Insira o primeiro valor:", value=0.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem", value=0.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("Insira o segundo valor:", value=30.0, format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("Fim do Intervalo de Modelagem", value=30.0, format="%.2f", step=0.5)) 
     
     elif modelo_escolhido == "Linear":
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Insira o primeiro valor:", value=5.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem", value=5.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("Insira o segundo valor:", value=12.0, format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("fim do Intervalo de Modelagem", value=12.0, format="%.2f", step=0.5)) 
     
     elif modelo_escolhido == "Exponencial":
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Insira o primeiro valor:", value=5.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem", value=5.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("Insira o segundo valor:", value=12.0,format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("Fim do Intervalo de Modelagem", value=12.0,format="%.2f", step=0.5)) 
 
     else:
         ini_log = 0      
