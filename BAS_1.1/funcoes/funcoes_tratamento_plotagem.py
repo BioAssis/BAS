@@ -32,8 +32,11 @@ def iniciar_tratamento_plotagem():
             st.write(tabela)
 
 
-
-
+        
+        colunas = st.columns(4)
+        with colunas[3]:
+            if st.button("Saiba Mais Sobre o Projeto"):
+                st.switch_page("pages/Ver_Mais.py")
 
     else:
         st.write("Nenhum poço foi selecionado ainda")

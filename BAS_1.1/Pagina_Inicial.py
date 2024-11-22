@@ -1,5 +1,6 @@
 import streamlit as st # type: ignore
 
+st.set_page_config(page_title="Pagina Inicial", layout="wide", initial_sidebar_state="expanded")
 
 
 st.title("Bem vindo ao BAS")
@@ -26,7 +27,7 @@ with colunas[0]:
 
 
 
-st.sidebar.markdown("<br>" * 12, unsafe_allow_html=True)
+st.sidebar.markdown("<br>" * 18, unsafe_allow_html=True)
 
 
 url_imagem = "https://raw.githubusercontent.com/BioAssis/BAS/main/BAS_1.1/midias/logo.jpeg"
