@@ -921,10 +921,14 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
                     legenda = st.text_input(f"Legenda: {col}", value=col)
                     legendas.append(legenda)
 
-    
-    plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, posicao_legenda, tamanho_legenda, tamanho_titulo, mostrar_grid, desvio_padrao, intervalo, ini_log, fim_log)
+    colunas = st.columns(2)
 
+    with colunas[0]:
+        plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, posicao_legenda, tamanho_legenda, tamanho_titulo, mostrar_grid, desvio_padrao, intervalo, ini_log, fim_log)
 
+    with colunas[1]:
+        tabela = pd.DataFrame(df_tabela_final)
+        st.write(tabela)
 
 
 
