@@ -87,51 +87,9 @@ if uploaded_files:
 
 
 
-        def seleciona_da_tabela(df_tabela):
-            # Descrição de Cada Coluna do dataset
-            column_tooltips = {
-            "Placa": "Identificação da placa.",
-            "Poço": "Identificação do poço.",
-            "μMax": "Taxa de crescimento dos micro-organismos.",
-            "Fase lag": "Tempo de adaptação antes do crescimento exponencial.",
-            "A": "População máxima de micro-organismos.",
-            "Growth Score": "Pontuação de crescimento calculada."
-            }
-
-            # Certifique-se de que o dataframe não tenha colunas duplicadas
-            df = pd.DataFrame(df_tabela).drop_duplicates()
-
-            # Configurando GridOptions com tooltip
-            gb = GridOptionsBuilder.from_dataframe(df)
-
-            # Adicionando descrições para cada coluna
-            for col, tooltip in column_tooltips.items():
-                if col in df.columns:
-                    gb.configure_column(col, headerTooltip=tooltip)
-
-            # Configuração de seleção e grid
-            gb.configure_selection(selection_mode="multiple", use_checkbox=True)
-            grid_options = gb.build()
-
-            # Exibindo o AgGrid com as configurações ajustadas
-            grid_response = AgGrid(
-                df,
-                gridOptions=grid_options,
-                data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
-                update_mode=GridUpdateMode.MODEL_CHANGED,
-                fit_columns_on_grid_load=True,
-                theme='streamlit',  # Altere para um dos temas válidos
-            )
-
-            
-            # Capturando as linhas selecionadas
-            poços_selecionados = grid_response.get("selected_rows", [])  # Evita erros se não houver seleções
-        
-            return poços_selecionados
-
 
         if poços_selecionados == None:
-            poços_selecionados = seleciona_da_tabela(df_tabela)
+            poços_selecionados = fn.seleciona_da_tabela(df_tabela)
 
         
 
@@ -154,10 +112,22 @@ if uploaded_files:
 
         # ----------------------------------------------------------------------
             st.header("Análise individual:")
-            fbas.gera_tres_graficos(df_dict_com_triplicata,poços_selecionados)
+            fbas.gerar_tres_graficos(df_dict_com_triplicata,poços_selecionados)
 
         else:
             st.markdown("Nenhum poço selecionado.")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -177,9 +147,27 @@ if uploaded_files:
                 ["Gompertz", "Zwietering", "Linear", "Exponencial"],  
                 index=0
             )
-    
+
+
+            if modelo_escolhido == "Gompertz":
+                colunas = st.columns(2)
+
+                with colunas[0]:
+                    ini_log = int(st.number_input("Insira o primeiro valor:", value=0.0, format="%.2f", step=0.5))
+                        
+                with colunas[1]:     
+                    fim_log = int(st.number_input("Insira o segundo valor:", value=30.0, format="%.2f", step=0.5)) 
+
+            elif modelo_escolhido == "Zwietering":
+                colunas = st.columns(2)
+
+                with colunas[0]:
+                    ini_log = int(st.number_input("Insira o primeiro valor:", value=0.0, format="%.2f", step=0.5))
+                        
+                with colunas[1]:     
+                    fim_log = int(st.number_input("Insira o segundo valor:", value=30.0, format="%.2f", step=0.5)) 
             
-            if modelo_escolhido == "Linear":
+            elif modelo_escolhido == "Linear":
                 colunas = st.columns(2)
 
                 with colunas[0]:

@@ -8,15 +8,15 @@ from bokeh.plotting import figure  # type: ignore
 from bokeh.palettes import Dark2   # type: ignore
 from bokeh.models import ColumnDataSource, Legend, LegendItem, HoverTool   # type: ignore
 from bokeh.models import Whisker   # type: ignore
-
+from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode   # type: ignore
 
 #______________________________________________________________________________________________________________________________________________
 
 
 def importar_arquivos():
 
-    uploaded_files = st.sidebar.file_uploader(
-        "Olá bobinhos ", 
+    uploaded_files = st.file_uploader(
+        "Olá usuário, clique abaixo e selecione o arquivo .xlsx que desejar.", 
         type=["xlsx", "csv", "txt"], 
         accept_multiple_files=True, 
         key="import"
@@ -37,7 +37,7 @@ def importar_arquivos():
             except Exception as e:
                 st.error(f"Erro ao ler {uploaded_file.name}: {str(e)}")
 
-        st.sidebar.write(f"{arquivos} arquivos foram carregados.")
+        #st.write(f"Arquivo de nome {uploaded_file.name} foi carregado e salvo como Placa_{arquivos}.")
                     #st.dataframe(df)
 
     return dados_brutos
@@ -232,6 +232,55 @@ def arquivos_to_placas(dados_brutos):
 
     return dici_placas_com_triplicatas, dici_placas_sem_triplicatas
 
+
+
+def seleciona_da_tabela(dici_sem_triplicata):
+    """_summary_
+
+    Args:
+        df_tabela (_type_): _description_
+    """
+
+    # Descrição de Cada Coluna do dataset
+    column_tooltips = {
+    "Placa": "Identificação da placa.",
+    "Poço": "Identificação do poço.",
+    "μMax": "Taxa de crescimento dos micro-organismos obtida através do modelo de Gompertz.",
+    "Fase lag": "Tempo de adaptação antes do crescimento exponencial obtida através do modelo de Gompertz.",
+    "A": "População máxima de micro-organismos obtida através do modelo de Gompertz.",
+    "Growth Score": "Pontuação de crescimento calculada."
+    }
+
+    # Certifique-se de que o dataframe não tenha colunas duplicadas
+    df = pd.DataFrame(dici_sem_triplicata).drop_duplicates()
+
+    # Configurando GridOptions com tooltip
+    gb = GridOptionsBuilder.from_dataframe(df)
+
+    # Adicionando descrições para cada coluna
+    for col, tooltip in column_tooltips.items():
+        if col in df.columns:
+            gb.configure_column(col, headerTooltip=tooltip)
+
+    # Configuração de seleção e grid
+    gb.configure_selection(selection_mode="multiple", use_checkbox=True)
+    grid_options = gb.build()
+
+    # Exibindo o AgGrid com as configurações ajustadas
+    grid_response = AgGrid(
+        df,
+        gridOptions=grid_options,
+        data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+        update_mode=GridUpdateMode.MODEL_CHANGED,
+        fit_columns_on_grid_load=True,
+        theme='streamlit',  # Altere para um dos temas válidos
+    )
+
+
+    # Capturando as linhas selecionadas
+    poços_selecionados = grid_response.get("selected_rows", [])  # Evita erros se não houver seleções
+
+    return poços_selecionados
 
 
 #-------------------------------------- Funções Matemáticas para Modelagem dos Crescimentos ------------------------------------------------
