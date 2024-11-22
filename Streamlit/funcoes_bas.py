@@ -8,6 +8,8 @@ from bokeh.plotting import figure  # type: ignore
 from bokeh.palettes import Dark2   # type: ignore
 from bokeh.models import ColumnDataSource, Legend, LegendItem, HoverTool   # type: ignore
 from bokeh.models import Whisker   # type: ignore
+from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode   # type: ignore
+
 
 
 #______________________________________________________________________________________________________________________________________________
@@ -232,6 +234,54 @@ def arquivos_to_placas(dados_brutos):
 
     return dici_placas_com_triplicatas, dici_placas_sem_triplicatas
 
+
+def seleciona_da_tabela(dici_sem_triplicata):
+    """_summary_
+
+    Args:
+        df_tabela (_type_): _description_
+    """
+
+    # Descrição de Cada Coluna do dataset
+    column_tooltips = {
+    "Placa": "Identificação da placa.",
+    "Poço": "Identificação do poço.",
+    "μMax": "Taxa de crescimento dos micro-organismos obtida através do modelo de Gompertz.",
+    "Fase lag": "Tempo de adaptação antes do crescimento exponencial obtida através do modelo de Gompertz.",
+    "A": "População máxima de micro-organismos obtida através do modelo de Gompertz.",
+    "Growth Score": "Pontuação de crescimento calculada."
+    }
+
+    # Certifique-se de que o dataframe não tenha colunas duplicadas
+    df = pd.DataFrame(dici_sem_triplicata).drop_duplicates()
+
+    # Configurando GridOptions com tooltip
+    gb = GridOptionsBuilder.from_dataframe(df)
+
+    # Adicionando descrições para cada coluna
+    for col, tooltip in column_tooltips.items():
+        if col in df.columns:
+            gb.configure_column(col, headerTooltip=tooltip)
+
+    # Configuração de seleção e grid
+    gb.configure_selection(selection_mode="multiple", use_checkbox=True)
+    grid_options = gb.build()
+
+    # Exibindo o AgGrid com as configurações ajustadas
+    grid_response = AgGrid(
+        df,
+        gridOptions=grid_options,
+        data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+        update_mode=GridUpdateMode.MODEL_CHANGED,
+        fit_columns_on_grid_load=True,
+        theme='streamlit',  # Altere para um dos temas válidos
+    )
+
+
+    # Capturando as linhas selecionadas
+    poços_selecionados = grid_response.get("selected_rows", [])  # Evita erros se não houver seleções
+
+    return poços_selecionados
 
 
 #-------------------------------------- Funções Matemáticas para Modelagem dos Crescimentos ------------------------------------------------
@@ -708,7 +758,7 @@ def gerar_df_com_std(df_sem_triplicatas, df_com_triplicatas, poços_selecionados
 #  --------------------- Função que gera gráficos --------------------
 
 
-def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
+def plota_dataset_selecionado_final(df, poços_selecionados,desvio_padrao, titulo, legenda_x, legenda_y, legendas, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt"):
     """
     Args:
         df (dici): Dicionário contendo o dataset das placas e poços.
@@ -763,7 +813,8 @@ def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, 
     legend_items = []
 
     # Checkbox para mostrar/ocultar erro
-    mostrar_std = st.checkbox("Mostrar Desvio Padrão", value=True)
+    #mostrar_std = st.checkbox("Mostrar Desvio Padrão", value=True)
+    mostrar_std = desvio_padrao
 
     # Itera sobre as placas e poços para plotar os dados
     for i in range(len(poços_selecionados["Placa"])):

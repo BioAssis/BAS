@@ -6,6 +6,7 @@ import copy
 from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, GridUpdateMode   # type: ignore
 
 
+
 st.set_page_config(layout="wide")
 
 #Criar as funções de carregamentos de dados
@@ -243,6 +244,8 @@ if uploaded_files:
                     index=0
                 )
 
+                desvio_padrao = st.checkbox("Mostrar Desvio Padrão", value=True)
+
                 if opcao_legenda == "Padrão":
                     legendas = legendas_padrao
 
@@ -267,7 +270,7 @@ if uploaded_files:
                             legendas.append(legenda)
 
             
-            fbas.plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo)
+            fbas.plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, desvio_padrao, titulo, xlabel, ylabel, legendas, fonte_selecionada, tamanho_legenda, tamanho_titulo)
 
 
             
