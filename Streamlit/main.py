@@ -89,8 +89,8 @@ if uploaded_files:
 
 
 
-        if poços_selecionados == None:
-            poços_selecionados = fbas.seleciona_da_tabela(df_tabela)
+        
+        poços_selecionados = fbas.seleciona_da_tabela(df_tabela)
 
         
 
