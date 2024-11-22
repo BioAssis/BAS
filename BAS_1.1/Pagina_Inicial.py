@@ -27,7 +27,7 @@ with colunas[0]:
 
 
 
-st.sidebar.markdown("<br>" * 18, unsafe_allow_html=True)
+#st.sidebar.markdown("<br>" * 4, unsafe_allow_html=True)
 
 
 url_imagem = "https://raw.githubusercontent.com/BioAssis/BAS/main/BAS_1.1/midias/logo.jpeg"

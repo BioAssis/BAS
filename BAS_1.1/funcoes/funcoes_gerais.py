@@ -388,37 +388,37 @@ def escolher_modelo():
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem:", value=0.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem em X:", value=0.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("Fim do Intervalo de Modelagem:", value=ini_log + 5.0, format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("Fim do Intervalo de Modelagem em X:", value=ini_log + 5.0, format="%.2f", step=0.5)) 
 
     elif modelo_escolhido == "Zwietering":
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem", value=0.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem em X", value=0.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("Fim do Intervalo de Modelagem", value=30.0, format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("Fim do Intervalo de Modelagem em X", value=ini_log + 5.0, format="%.2f", step=0.5)) 
     
     elif modelo_escolhido == "Linear":
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem", value=5.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem em X", value=5.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("fim do Intervalo de Modelagem", value=12.0, format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("Fim do Intervalo de Modelagem em X", value=ini_log + 5.0, format="%.2f", step=0.5)) 
     
     elif modelo_escolhido == "Exponencial":
         colunas = st.columns(2)
 
         with colunas[0]:
-            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem", value=5.0, format="%.2f", step=0.5))
+            ini_log = int(st.number_input("Inicio do Intervalo de Modelagem em X", value=5.0, format="%.2f", step=0.5))
                 
         with colunas[1]:     
-            fim_log = int(st.number_input("Fim do Intervalo de Modelagem", value=12.0,format="%.2f", step=0.5)) 
+            fim_log = int(st.number_input("Fim do Intervalo de Modelagem em X",value=ini_log + 5.0,format="%.2f", step=0.5)) 
 
     else:
         ini_log = 0      
@@ -852,9 +852,20 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
 
         with colunas[1]:
             titulo = st.text_input('Título do Gráfico', 'Crescimento Médio(Green Value x Tempo)')
-            fonte_selecionada = st.selectbox(
-                "Escolha a fonte do gráfico:",
-                ["Arial", "Times New Roman", "Helvetica"])
+
+            posicao = st.selectbox(
+                'Posição da Legenda',
+                ["Canto-Direita","Canto-Esquerda", "Topo-Direita", "Topo-Esquerda"],  # Opções
+                index=0
+                )
+            if posicao == "Topo-Esquerda":
+                posicao_legenda = "top_left"
+            elif posicao == "Topo-Direita":
+                posicao_legenda = "top_right"
+            elif posicao == "Canto-Esquerda":
+                posicao_legenda = "bottom_left"
+            elif posicao == "Canto-Direita":
+                posicao_legenda = "bottom_right"
 
 
         with colunas[2]:
@@ -867,19 +878,11 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
             
             intervalo = st.checkbox(" Mostrar Intervalo", value=True)
 
-            posicao = st.selectbox(
-                'Posições',
-                ["Topo-Esquerda", "Topo-Direita","Canto-Esquerda", "Canto-Direita"],  # Opções
-                index=0
-                )
-            if posicao == "Topo-Esquerda":
-                posicao_legenda = "top_left"
-            elif posicao == "Topo-Direita":
-                posicao_legenda = "top_right"
-            elif posicao == "Canto-Esquerda":
-                posicao_legenda = "bottom_left"
-            elif posicao == "Canto-Direita":
-                posicao_legenda = "bottom_right"
+            mostrar_grid = st.checkbox("Mostrar grid de fundo", value=True)
+
+
+
+            
 
 
         legendas_padrao = gerar_legendas(df_tabela_final)
@@ -905,6 +908,7 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
             excesso = len(legendas_padrao) % 2  # Excesso de elementos ao dividir por 3
 
 
+
             # Coloca os valores em cada coluna, considerando o excesso
             with colunas[0]:
                 for col in legendas_padrao[0:terco + (1 if excesso > 0 else 0)]:
@@ -918,7 +922,7 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
                     legendas.append(legenda)
 
     
-    plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, posicao_legenda, fonte_selecionada, tamanho_legenda, tamanho_titulo, desvio_padrao, intervalo, ini_log, fim_log)
+    plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, posicao_legenda, tamanho_legenda, tamanho_titulo, mostrar_grid, desvio_padrao, intervalo, ini_log, fim_log)
 
 
 
@@ -1084,7 +1088,7 @@ def gerar_tres_graficos(df_comtriplicatas, df_selecionados):
 
 
 
-def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, posicao_legenda, fonte_selecionada, tamanho_legenda="12pt", tamanho_titulo="14pt", desvio=True, intervalo=True, ini_log=None, fim_log=None):
+def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, legenda_y, legendas, posicao_legenda, tamanho_legenda="12pt", tamanho_titulo="14pt",grid=True, desvio=True, intervalo=True, ini_log=None, fim_log=None):
     """
     Args:
         df (dici): Dicionário contendo o dataset das placas e poços.
@@ -1101,7 +1105,7 @@ def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, 
     """
     
 
-    mostrar_grid = st.checkbox("Mostrar grid de fundo", value=True)
+    mostrar_grid = grid
 
     # Configurações adicionais de fonte
     tamanho_titulo = f"{tamanho_titulo}pt"
@@ -1131,12 +1135,12 @@ def plota_dataset_selecionado_final(df, poços_selecionados, titulo, legenda_x, 
     """
 
     # Configuração do título e dos eixos
-    p.title.text_font = fonte_selecionada
+    p.title.text_font = "Arial"
     p.title.text_font_size = tamanho_titulo
     p.title.align = "center"
     p.title.text_color = "black"
-    p.xaxis.axis_label_text_font = fonte_selecionada
-    p.yaxis.axis_label_text_font = fonte_selecionada
+    p.xaxis.axis_label_text_font = "Arial"
+    p.yaxis.axis_label_text_font = "Arial"
     p.xaxis.axis_label_text_font_size = tamanho_legenda
     p.yaxis.axis_label_text_font_size = tamanho_legenda
     p.xaxis.axis_label_text_color = "#000000"
