@@ -457,12 +457,12 @@ S
     tabela = {
             "Placa": [],
             "Poços": [],
+            "R²": [],
             "μMax": [],
             "A": [],
             "Fase lag": [],
             "Intervalo(hrs)": [],
             "Growth Score": [],
-            "R²": [],
             }
 
 
@@ -473,11 +473,11 @@ S
             tabela = {
                 "Placa": [],
                 "Poços": [],
+                "R²": [],
                 "μMax": [],
                 "A": [],
                 "Fase lag": [],
                 "Growth Score": [],
-                "R²": [],
             }
 
             for placa in dici_final:
@@ -927,6 +927,8 @@ def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela
         plota_dataset_selecionado_final(df_sem_triplicata_com_std, poços_selecionados, titulo, xlabel, ylabel, legendas, posicao_legenda, tamanho_legenda, tamanho_titulo, mostrar_grid, desvio_padrao, intervalo, ini_log, fim_log)
 
     with colunas[1]:
+
+        st.subtitle("Tabela de Parametros")
         tabela = pd.DataFrame(df_tabela_final)
         st.write(tabela)
 
