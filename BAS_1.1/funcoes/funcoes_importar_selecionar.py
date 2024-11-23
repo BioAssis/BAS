@@ -105,6 +105,18 @@ def importar_e_selecionar():
         st.write("Selecione um arquivo clicando logo acima.")   
 
 
+        st.markdown("<br>" * 2, unsafe_allow_html=True)
+
+        colunas = st.columns(4)
+
+
+        with colunas[0]:
+
+            if st.button("Voltar para Página Inicial"):
+
+                st.switch_page("Pagina_Inicial.py")
+
+
     
 
 
