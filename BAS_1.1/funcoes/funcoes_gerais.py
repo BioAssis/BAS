@@ -498,31 +498,39 @@ S
 
 
                     if inicio_intervalo > fim_intervalo:
-                        continue
 
-                    modelo_gompertz = Model(gompertz)
+                        tabela["Placa"].append(placa)
+                        tabela["Poços"].append(poço)
+                        tabela["R²"].append(0)
+                        tabela['μMax'].append(0)
+                        tabela['A'].append(resultado_fit.params["Nmax"].value)
+                        tabela["Fase lag"].append(0)
+                        tabela["Growth Score"].append(0)
 
-                    params = modelo_gompertz.make_params(Nmax=10, k=0.5, tlag=1)
-                    params['Nmax'].min = 0  # Limite mínimo para A
-                    params['k'].min = 0.01  # Limite mínimo para μMax
-                    params['tlag'].min = 0  # Limite mínimo para tlag
+                    else:
+                        modelo_gompertz = Model(gompertz)
 
-                    resultado_fit = modelo_gompertz.fit(y_intervalo, params, t=x_intervalo)
+                        params = modelo_gompertz.make_params(Nmax=10, k=0.5, tlag=1)
+                        params['Nmax'].min = 0  # Limite mínimo para A
+                        params['k'].min = 0.01  # Limite mínimo para μMax
+                        params['tlag'].min = 0  # Limite mínimo para tlag
 
-                    y_predito = resultado_fit.best_fit
-                    ss_total = np.sum((y_intervalo - np.mean(y_intervalo)) ** 2)
-                    ss_residual = np.sum((y_intervalo - y_predito) ** 2)
-                    r2 = 1 - (ss_residual / ss_total)
+                        resultado_fit = modelo_gompertz.fit(y_intervalo, params, t=x_intervalo)
 
-                    GS = growth_score(resultado_fit.params["k"].value,resultado_fit.params["Nmax"].value)
+                        y_predito = resultado_fit.best_fit
+                        ss_total = np.sum((y_intervalo - np.mean(y_intervalo)) ** 2)
+                        ss_residual = np.sum((y_intervalo - y_predito) ** 2)
+                        r2 = 1 - (ss_residual / ss_total)
 
-                    tabela["Placa"].append(placa)
-                    tabela["Poços"].append(poço)
-                    tabela["R²"].append(r2)
-                    tabela['μMax'].append(resultado_fit.params["k"].value)
-                    tabela['A'].append(resultado_fit.params["Nmax"].value)
-                    tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
-                    tabela["Growth Score"].append(GS)
+                        GS = growth_score(resultado_fit.params["k"].value,resultado_fit.params["Nmax"].value)
+
+                        tabela["Placa"].append(placa)
+                        tabela["Poços"].append(poço)
+                        tabela["R²"].append(r2)
+                        tabela['μMax'].append(resultado_fit.params["k"].value)
+                        tabela['A'].append(resultado_fit.params["Nmax"].value)
+                        tabela["Fase lag"].append(resultado_fit.params["tlag"].value)
+                        tabela["Growth Score"].append(GS)
 
 
             
