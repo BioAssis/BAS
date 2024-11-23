@@ -24,12 +24,11 @@ def iniciar_tratamento_plotagem():
 
 
     
-        fn.gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados, df_tabela_final, ini_log,fim_log)
+        fn.gerar_grafico_e_tabela(df_sem_triplicata_com_std, poços_selecionados, df_tabela_final, ini_log,fim_log)
 
     
 
-
-
+        st.markdown("<br>" * 3, unsafe_allow_html=True)
         
         colunas = st.columns(4)
 

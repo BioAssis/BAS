@@ -839,7 +839,7 @@ def gerar_df_com_std(df_sem_triplicatas, df_com_triplicatas, poços_selecionados
 #  --------------------- Função que gera gráficos --------------------
 
 
-def gerar_grafico_final(df_sem_triplicata_com_std, poços_selecionados,df_tabela_final, ini_log,fim_log):
+def gerar_grafico_e_tabela(df_sem_triplicata_com_std, poços_selecionados,df_tabela_final, ini_log,fim_log):
 
     with st.expander("Opções de edição do Gráfico"):
         st.write("Aqui está um exemplo de um gráfico:")
