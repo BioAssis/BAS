@@ -15,23 +15,32 @@ import funcoes.funcoes_gerais as fn
 
 def importar_e_selecionar():
 
-    
+   
 
     if 'dados_salvos' not in st.session_state:
         dados_brutos = fn.importar_arquivos()
 
-    else:
-        dados_salvos = copy.deepcopy(st.session_state.dados_salvos)
-        dados_atuais = fn.importar_arquivos()
 
-        dados_brutos = dados_salvos + dados_atuais
+    elif 'dados_salvos' in st.session_state:
+
+        if st.button("Reiniciar arquivos importados"):
+            del st.session_state["dados_salvos"]
+            dados_brutos = fn.importar_arquivos()
 
 
+        else:
+            dados_salvos = copy.deepcopy(st.session_state.dados_salvos)
+            dados_atuais = fn.importar_arquivos()
+
+            dados_brutos = dados_salvos + dados_atuais
+
+
+    
     
 
     if len(dados_brutos) != 0:
 
-        st.markdown("<br>" * 2, unsafe_allow_html=True)
+        st.markdown("<br>" * 1, unsafe_allow_html=True)
             
         df_dict_com_triplicata, df_dict_sem_triplicata = fn.arquivos_to_placas(dados_brutos)  # Gera os 2 dfs, com e sem triplicata.
 
@@ -64,10 +73,18 @@ def importar_e_selecionar():
         
 
 
-        st.markdown("<br>" * 1, unsafe_allow_html=True)
+        st.markdown("<br>" * 2, unsafe_allow_html=True)
 
 
         colunas = st.columns(4)
+
+
+        with colunas[0]:
+
+            if st.button("Voltar para Página Inicial"):
+
+                st.switch_page("Pagina_Inicial.py")
+
 
         with colunas[3]:
 
