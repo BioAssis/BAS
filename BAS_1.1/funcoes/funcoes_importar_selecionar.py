@@ -24,7 +24,8 @@ def importar_e_selecionar():
     elif 'dados_salvos' in st.session_state:
 
         if st.button("Reiniciar arquivos importados"):
-            del st.session_state["dados_salvos"]
+            #del st.session_state["dados_salvos"]
+            st.session_state.clear()
             dados_brutos = fn.importar_arquivos()
 
 

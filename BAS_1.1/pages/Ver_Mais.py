@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st # type: ignore
 
 st.set_page_config(page_title="Sobre Nós", layout="wide", initial_sidebar_state="expanded")
 

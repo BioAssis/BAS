@@ -11,12 +11,18 @@ st.write("Um software especializado em bioprocessamento de dados obtidos do grow
 st.markdown("<br>" * 4, unsafe_allow_html=True)
 colunas = st.columns(4)
 
+
+
+
+st.session_state.clear()
+
+  
 with colunas[3]: 
     if st.button("Importar Dados"):
         st.switch_page("pages/Importação_&_Seleção.py")
 
-        if st.session_state["dados_salvos"] is not None:
-            del st.session_state["dados_salvos"]   
+        
+
 
 
 with colunas[0]: 
