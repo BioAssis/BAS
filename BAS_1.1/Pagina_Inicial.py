@@ -4,7 +4,7 @@ st.set_page_config(page_title="Pagina Inicial", layout="wide", initial_sidebar_s
 
 
 st.title("Bem vindo ao BAS")
-st.write("Um software especializado em bioprocessamento de dados obtidos do growth profiler. Comece agora seu trabalho clicando em 'Importar Dados' e caso queira conhecer mais sobre nosso trabalho clique em 'Saiba Mais'.")
+st.write("O BAS(Bioprocess Assistant Software) é um software especializado em bioprocessamento de dados obtidos do equipamento Growth profiler. Comece agora seu trabalho clicando em 'Importar Dados' e caso queira conhecer mais sobre nosso trabalho clique em 'Saiba Mais'.")
 
 
 

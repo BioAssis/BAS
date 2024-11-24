@@ -36,6 +36,7 @@ def iniciar_tratamento_plotagem():
 
             with colunas[0]:
                 if st.button("Voltar para Seleção"):
+                    del st.session_state.poços_selecionados
                     st.switch_page("pages/Importação_&_Seleção.py")
 
 
@@ -45,7 +46,7 @@ def iniciar_tratamento_plotagem():
                     st.switch_page("pages/Ver_Mais.py")
             
     else: 
-        
+
         st.write("Nenhum poço foi selecionado ainda. Volte para a seção anterior e selecione os poços de seu interesse.")
 
 
@@ -56,7 +57,6 @@ def iniciar_tratamento_plotagem():
         with colunas[0]:
 
             if st.button("Selecionar dados"):
-
                 st.switch_page("pages/Importação_&_Seleção.py")
 
 

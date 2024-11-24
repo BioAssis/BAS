@@ -24,9 +24,9 @@ def importar_e_selecionar():
     elif 'dados_salvos' in st.session_state:
 
         if st.button("Reiniciar arquivos importados"):
-            #del st.session_state["dados_salvos"]
             st.session_state.clear()
-            dados_brutos = fn.importar_arquivos()
+            st.rerun()
+            #dados_brutos = fn.importar_arquivos()
 
 
         else:
@@ -95,7 +95,8 @@ def importar_e_selecionar():
 
                 st.session_state.dici_final_com_triplicatas = dici_final_com_triplicatas #Criando o session_state dici_final_com_triplicatas.
 
-                st.session_state.poços_selecionados = poços_selecionados #Criando o session_state poços_selecio
+                if poços_selecionados is not None:
+                    st.session_state.poços_selecionados = poços_selecionados #Criando o session_state poços_selecionados
 
                 st.session_state.dados_salvos = dados_brutos #Criando o session_state poços_selecionados
 
