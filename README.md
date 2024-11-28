@@ -25,7 +25,9 @@ O BAS foi desenvolvido com o objetivo principal de propor a acessibiblidade tant
 
 ## Execução: 
 
-Caso queira utilizar o BAS, para fins de teste da ferramenta ou por curiosidade, esse repositório oferece um conjunto de dados de exemplo, conjunto esse disponibilizado pelo Laboratório Nacional de Biorrenováveis (LNBr), o qual descreve o crescimento de diferentes cepas de da levêdura Saccharomyces cerevisiae, dados esses, gerados pelo próprio Growth Profiler. 
+Caso queira utilizar o BAS, para fins de teste da ferramenta ou por curiosidade, esse repositório oferece um conjunto de dados de exemplo, conjunto esse disponibilizado pelo Laboratório Nacional de Biorrenováveis (LNBr), o qual descreve o crescimento de diferentes cepas da levêdura Saccharomyces cerevisiae, dados esses, gerados pelo próprio Growth Profiler. 
+
+  - Dados para teste: [Dado_Exemplo](Exemplo_dados/Dados_teste_BAS.xlsx)
 
 ## Criadores e Idealizadores:
 Tanto a interface gráfica quanto as funções utilizadas para qualquer manipulação de dados dentro BAS foram criadas pelos estudantes: 
