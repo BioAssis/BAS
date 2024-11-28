@@ -1,3 +1,6 @@
+![Logo do BAS](https://github.com/BioAssis/BAS/blob/0a5202cde1261b242102b5bb01a570a23cc32c83/BAS/midias/logo.jpeg)
+
+
 # BAS - Bioprecess Assistant Software
 
 Este repositório online foi desenvolvido a fim de disponibilizar a documentação e as instruções da criação do software online BAS, além disso, qualquer usuário pode utilizar o BAS de forma local, fazendo o download desse repositório e seguindo as instruções dispostas abaixo. O site oficial do software aqui proposto, pode ser acessado clicando em [BAS - Bioprocess Assistant Software](https://baslnbr.streamlit.app).
