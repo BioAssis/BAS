@@ -1,6 +1,3 @@
-![Logo do BAS](https://github.com/BioAssis/BAS/blob/0a5202cde1261b242102b5bb01a570a23cc32c83/BAS/midias/logo.jpeg)
-
-
 # BAS - Bioprecess Assistant Software
 
 Este repositório online foi desenvolvido a fim de disponibilizar a documentação e as instruções da criação do software online BAS, além disso, qualquer usuário pode utilizar o BAS de forma local, fazendo o download desse repositório e seguindo as instruções dispostas abaixo. O site oficial do software aqui proposto, pode ser acessado clicando em [BAS - Bioprocess Assistant Software](https://baslnbr.streamlit.app).
@@ -47,3 +44,14 @@ A idéia e proposta do projeto foram criadas pelos pesquisadores/doutores:
   - João H. Colombelli Manfrão Netto. Email: joao.netto@lnbr.cnpem.br  Pesquisador do LNBr
 
 Uma versão teste de conceito, foi produzida por um ex-estágio do LNBr, Micael Montauvani Baruch, a qual foi de extrema importância para a conclusão e síntese desse trabalho. 
+
+## Agradecimentos:
+Agradecemos pela oportunidade e pelo suporte dos pesquisadores citados acima, os quais se dedicaram profundadem nessa orientação de projeto. Também agradecemos ao LNBr pela estrutura e pela receptividae em relação aos alunos. 
+
+E por fim agradecemos a todos aqueles que de alguma forma ajudaram na concepção de desse projeto. Obrigado e desfrutem do BAS o quanto acharem justo. 
+
+![Logo do BAS](https://github.com/BioAssis/BAS/blob/0a5202cde1261b242102b5bb01a570a23cc32c83/BAS/midias/logo.jpeg)
+
+
+
+
