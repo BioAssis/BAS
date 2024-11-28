@@ -1,6 +1,6 @@
 # BAS - Bioprecess Assistant Software
 
-Este repositório online foi desenvolvido a fim de disponibilizar a documentação e as instruções da criação do software online BAS, além disso, qualquer usuário pode utilizar o BAS de forma local, fazendo o download desse repositório e seguindo as instruções dispostas abaixo. Esse repositório também  que para ser acesado basta [clicar aqui](https://baslnbr.streamlit.app).
+Este repositório online foi desenvolvido a fim de disponibilizar a documentação e as instruções da criação do software online BAS, além disso, qualquer usuário pode utilizar o BAS de forma local, fazendo o download desse repositório e seguindo as instruções dispostas abaixo. O site oficiela aqui proposto, pode ser acessado em [BAS - Bioprecess Assistant Software](https://baslnbr.streamlit.app).
 
 ## Instalação:
 Para instalar o BAS de forma local, basta clonar esse repositório para uma pasta conhecida e posteriormente realisar os seguintes passos abaixo, recomenda-se que os passos a seguir sejam realizados dentro de um novo ambiente virtual. o BAS utiliza a versão do python especificada no arquivo `runtime.txt`, certifique-se de utilizar a mesma versão do Python para a criação do novo ambiente virtual para evitar problemas de compatibilidade.
