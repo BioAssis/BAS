@@ -27,7 +27,7 @@ O BAS foi desenvolvido com o objetivo principal de propor a acessibiblidade tant
 
 Caso queira utilizar o BAS, para fins de teste da ferramenta ou por curiosidade, esse repositório oferece um conjunto de dados de exemplo, conjunto esse disponibilizado pelo Laboratório Nacional de Biorrenováveis (LNBr), o qual descreve o crescimento de diferentes cepas da levêdura *Saccharomyces cerevisiae*, dados esses, gerados pelo próprio *Growth Profiler*. 
 
-  - Dados para teste: [Dado_Exemplo](https://github.com/BioAssis/BAS/raw/78dd27fbabf2e9686b8a4159adeab77470470cab/Exemplo_dados/Dados_teste_BAS.xlsx)
+  - Dados para teste: [Dado_Exemplo](https://github.com/BioAssis/BAS/raw/78dd27fbabf2e9686b8a4159adeab77470470cab/Exemplo_dados/Dados_teste_BAS.xlsx) (Clique para Download)
 
 Após baixar dos dados acima, clique em [BAS - Bioprocess Assistant Software](https://baslnbr.streamlit.app), para acessar o site online e conhecer a ferramenta.
 
