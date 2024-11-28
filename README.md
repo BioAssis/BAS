@@ -1,6 +1,6 @@
 # BAS - Bioprecess Assistant Software
 
-Este repositório online foi desenvolvido a fim de disponibilizar a documentação e as instruções para que qualquer usuário possa, caso se interesse, utilizar o BAS de forma local. Além disso, alimenta um site, que para ser acesado basta [clicar aqui](https://baslnbr.streamlit.app).
+Este repositório online foi desenvolvido a fim de disponibilizar a documentação e as instruções da criação do software online BAS, além disso, qualquer usuário pode utilizar o BAS de forma local, fazendo o download desse repositório e seguindo as instruções dispostas abaixo. Esse repositório também  que para ser acesado basta [clicar aqui](https://baslnbr.streamlit.app).
 
 ## Instalação:
 Para instalar o BAS de forma local, basta clonar esse repositório para uma pasta conhecida e posteriormente realisar os seguintes passos abaixo, recomenda-se que os passos a seguir sejam realizados dentro de um novo ambiente virtual. o BAS utiliza a versão do python especificada no arquivo `runtime.txt`, certifique-se de utilizar a mesma versão do Python para a criação do novo ambiente virtual para evitar problemas de compatibilidade.
@@ -17,11 +17,15 @@ Após instaladas as bibliotecas necessárias, para inicializar o software, entre
 
 ## Introdução:
 
-O BAS é um software desenvolvido por alunos da ILUM - Escola de Ciências - voltado para o suporte em bioprocessos com foco no tratamento e extração de informações, a partir de dados produzidos pelo equipamento Growth Profile. 
+O BAS é um software desenvolvido por alunos da ILUM - Escola de Ciências - voltado para o suporte em bioprocessos com foco no tratamento e extração de informações, a partir de dados produzidos pelo equipamento Growth Profile. Esse Git diponibiliza os documentos referentes à construção tanto da interface do software quanto das função usadas em cada uma das mecânicas que o BAS apresenta. 
 
 ## Objetivos: 
 
-O BAS foi desenvolvido com o objetivo principal de propor uma acessibiblidade tanto econômica, disponibilizando o código-fonte publicamente quanto interativa, criando uma interface limpa, desenhada a fim de direcionar o uso do software, sem milhares de botões e com uma linha de execução direta e clara. Não só isso, o BAS foi criado na rastreabilidade dos resultados obtidos, gerando informações capazes aumentar a reprodutibilidade dos resultados obtidos. 
+O BAS foi desenvolvido com o objetivo principal de propor a acessibiblidade tanto econômica, disponibilizando o código-fonte e todo o site públicamente, quanto interativa, criando uma interface limpa, desenhada a fim de direcionar o uso do software, com uma linha de execução direta e clara. Não só isso, o BAS foi criado com o intúito de aumentar rastreabilidade dos resultados obtidos, gerando informações capazes aumentar a reprodutibilidade dos resultados obtidos. 
+
+## Execução: 
+
+Caso queira utilizar o BAS, para fins de teste da ferramenta ou por curiosidade, esse repositório oferece um conjunto de dados de exemplo, conjunto esse disponibilizado pelo Laboratório Nacional de Biorrenováveis (LNBr), o qual descreve o crescimento de diferentes cepas de da levêdura Saccharomyces cerevisiae, dados esses, gerados pelo próprio Growth Profiler. 
 
 ## Criadores e Idealizadores:
 Tanto a interface gráfica quanto as funções utilizadas para qualquer manipulação de dados dentro BAS foram criadas pelos estudantes: 
