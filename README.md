@@ -43,4 +43,4 @@ A idéia e proposta do projeto foram criadas pelos pesquisadores/doutores:
   - Isabela Lobos de Mesquita Sampaio. Email: isabelle.sampaio@lnbr.cnpem.br Pesquisadora do LNBr
   - João H. Colombelli Manfrão Netto. Email: joao.netto@lnbr.cnpem.br  Pesquisador do LNBr
 
-Uma versão, teste de conceito, foi produzida por um ex-estágio do LNBr, (nome do rapaz), a qual foi de extrema importância para a conclusão e síntese desse trabalho. 
+Uma versão teste de conceito, foi produzida por um ex-estágio do LNBr, Micael Montauvani Baruch, a qual foi de extrema importância para a conclusão e síntese desse trabalho. 
