@@ -14,6 +14,7 @@ colunas = st.columns(4)
 
 
 
+
 st.session_state.clear()
 
   
