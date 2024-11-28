@@ -33,15 +33,17 @@ Após baixar dos dados acima, clique em [BAS - Bioprocess Assistant Software](ht
 
 ## Criadores e Idealizadores:
 Tanto a interface gráfica quanto as funções utilizadas para qualquer manipulação de dados dentro BAS foram criadas pelos estudantes: 
-  - Beatriz Borges Ribeiro, email: beatriz23028@ilum.cnpem.br.
+  - Beatriz Borges Ribeiro, email: beatriz23028@ilum.cnpem.br.  
     Aluna do 4° Semestre do Curso de Bacharel em Ciência e Tecnologia, Ilum - Escola de Ciências.
     
-  - Daniel Bravin Martins, email: daniel23020@ilum.cnpem.br.
+  - Daniel Bravin Martins, email: daniel23020@ilum.cnpem.br.  
     Aluno do 4° Semestre do Curso de Bacharel em Ciência e Tecnologia, Ilum - Escola de Ciências.
 
 A idéia e proposta do projeto foram criadas pelos pesquisadores/doutores:
-  - Isabela Lobos de Mesquita Sampaio. Email: isabelle.sampaio@lnbr.cnpem.br Pesquisadora do LNBr
-  - João H. Colombelli Manfrão Netto. Email: joao.netto@lnbr.cnpem.br  Pesquisador do LNBr
+  - Isabela Lobos de Mesquita Sampaio. Email: isabelle.sampaio@lnbr.cnpem.br  
+    Pesquisadora do LNBr.
+  - João H. Colombelli Manfrão Netto. Email: joao.netto@lnbr.cnpem.br  
+    Pesquisador do LNBr.
 
 Uma versão teste de conceito, foi produzida por um ex-estágio do LNBr, Micael Montauvani Baruch, a qual foi de extrema importância para a conclusão e síntese desse trabalho. 
 
