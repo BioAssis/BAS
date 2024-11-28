@@ -51,6 +51,7 @@ def importar_e_selecionar():
         poços_selecionados = None
 
 
+
         df_tabela = fn.gerar_tabela(dici_final, poços_selecionados) # A partir de dici_final(sem_triplicatas) cria uma tabela com os parametros de cada poço.
 
 
