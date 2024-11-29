@@ -64,3 +64,12 @@ def iniciar_ver_mais():
 
     Muito obrigado e aproveitem o BAS!
     """)
+
+    st.markdown("<br>" * 4, unsafe_allow_html=True)
+    colunas = st.columns(4)
+
+    
+    with colunas[3]: 
+        if st.button("Página Inicial"):
+            st.switch_page("Pagina_Inicial.py")
+
