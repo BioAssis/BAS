@@ -1,14 +1,12 @@
 import streamlit as st # type: ignore
+import funcoes.funcoes_ver_mais as fn
 
 st.set_page_config(page_title="Sobre Nós", layout="wide", initial_sidebar_state="expanded")
 
+
 st.title("Sobre Nós")
 
-
-
-
-
-
+fn.iniciar_ver_mais()
 
 
 
