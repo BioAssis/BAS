@@ -9,9 +9,9 @@ def iniciar_ver_mais():
 
     # Sobre o Projeto
     st.write("""
-    A construção e desenvolvimento do **BAS** ocorreu durante todo o 2° semestre dos ano de 2024, como um projeto da matéria de Iniciação à Pesquisa III,
-    da Ilum - Escola de Ciências, institucionalizada pelo Centro Nacional de Pesquisa em Energia e Materiais (CNPEM) no qual os alunos receberam 
-    a proposta de criar um aplicativo voltado para impulsionar as pequisas na área de bioprecessos, através de análise cinética de perfis de 
+    A construção e desenvolvimento do **BAS** ocorreu durante todo o 2° semestre do ano de 2024, como um projeto da matéria de Iniciação à Pesquisa III,
+    da Ilum - Escola de Ciências, institucionalizada pelo Centro Nacional de Pesquisa em Energia e Materiais (CNPEM), no qual os alunos receberam 
+    a proposta de criar um aplicativo voltado para impulsionar pequisas na área de bioprecessos através de análise cinética de perfis de 
     crescimento microbiano. Além disso, mais informaçãoes sobre a construção e estrutura de dados do software pode ser encontrada acessando o 
     [GitHub](https://github.com/BioAssis/BAS) do site.
     """)
